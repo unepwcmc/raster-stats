@@ -1,3 +1,5 @@
+*.tif
+*.swp
 *.gem
 *.rbc
 .bundle
