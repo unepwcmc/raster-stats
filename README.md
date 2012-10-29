@@ -26,3 +26,7 @@ After starting the server, point your browser to:
 http://localhost:9393/stats/{"type": "FeatureCollection","features": [{ "type": "Feature", "id": 0, "properties": { "id": null, "name": 8, "AREA": 53262326429368.75, "PERIMETER": 25227163.252041 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -55.199133830905097, 14.166474645080788 ], [ -139.868730478081005, 21.093987098031544 ], [ -166.295907613411686, 80.619279286349169 ], [ -19.022124354384474, 82.671875568704948 ], [ -55.199133830905097, 14.166474645080788 ] ] ] } }]}
 
 This example uses a massive polygon, so the application will use the low resolution raster.
+
+
+License
+===========
