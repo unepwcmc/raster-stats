@@ -14,7 +14,7 @@ get '/' do
 end
 
 get '/stats/:polygon' do
-	TIME = Time.now.getutc.to_i
+  TIME = Time.now.getutc.to_i
   content_type :json
   polygon_file = "tmp/user_polygon_#{TIME}.geojson"
   File.open(polygon_file, 'w'){|f| f.write(params[:polygon])}
@@ -31,21 +31,21 @@ get '/stats/:polygon' do
   call = "#{STARSPAN} --vector '#{polygon_file}' --raster #{raster_path} --stats #{stats} --out-prefix #{RESULTS_PATH} --out-type table --summary-suffix #{TIME}.csv"
   puts call
   system(call)
-	if File.file?("#{RESULTS_PATH}#{TIME}.csv")
-		puts "File generated successfuly"
+  if File.file?("#{RESULTS_PATH}#{TIME}.csv")
+    puts "File generated successfuly"
     csv_table = CSV.read("#{RESULTS_PATH}#{TIME}.csv", {headers: true})
     list = []
-		csv_table.each do |row|
-			entry = {}
-			csv_table.headers.each do |header|
-				entry[header] = row[header]
-			end
-			list << entry
-		end
-		result = JSON.pretty_generate(list)
-		puts result
-		result
-	else 
+    csv_table.each do |row|
+      entry = {}
+      csv_table.headers.each do |header|
+        entry[header] = row[header]
+      end
+      list << entry
+    end
+    result = JSON.pretty_generate(list)
+    puts result
+    result
+  else 
     {}
-	end
+  end
 end
