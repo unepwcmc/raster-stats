@@ -16,6 +16,8 @@ The application will be running in port 9393:
 Set up
 ============
 
+Install starspan (http://starspan.projects.atlas.ca.gov/)
+
 Place your raster layers inside the <em>rasters</em> folder. The rasters should be split into three folders, based on their resolution: <em>high_resolution</em>, <em>medium_resolution</em>, and <em>low_resolution</em>.
 
 
@@ -56,3 +58,8 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+References
+===============
+
+Rueda, C.A., Greenberg, J.A., and Ustin, S.L. StarSpan: A Tool for Fast Selective Pixel Extraction from Remotely Sensed Data. (2005). Center for Spatial Technologies and Remote Sensing (CSTARS), University of California at Davis, Davis, CA.
