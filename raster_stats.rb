@@ -16,7 +16,7 @@ end
 get '/stats/:polygon' do
   TIME = Time.now.getutc.to_i
   content_type :json
-  polygon_file = "tmp/user_polygon_#{TIME}.geojson"
+  polygon_file = "polygons/user_polygon_#{TIME}.geojson"
   File.open(polygon_file, 'w'){|f| f.write(params[:polygon])}
   polygon = JSON.parse(params[:polygon])
   area= polygon["features"][0]["properties"]["AREA"]
