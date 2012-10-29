@@ -7,7 +7,8 @@ Sinatra app to calculate intersection between polygons and rasters.
 Start it
 ============
 
-<pre><code>shotgun config.ru</code></pre>
+<pre><code>bundle install
+shotgun config.ru</code></pre>
 The application will be running in port 9393:
 <code>http://localhost:9393/stats/{polygon in GeoJSON}</code>
 
