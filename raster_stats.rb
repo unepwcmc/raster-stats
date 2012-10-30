@@ -10,7 +10,7 @@ class RasterStats < Sinatra::Base
     polygon_file = "polygons/user_polygon_#{identifier}.geojson"
     File.open(polygon_file, 'w'){|f| f.write(params[:polygon])}
     polygon = JSON.parse(params[:polygon])
-    Starspan.new({:polygon_file=>polygon_file,:polygon=>polygon, :identifier=>identifier}).stats_results
+    Starspan.new({:polygon_file=>polygon_file,:polygon=>polygon, :identifier=>identifier}).run_analysis
   end
 
 end

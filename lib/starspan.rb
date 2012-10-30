@@ -54,7 +54,7 @@ class Starspan
     end
   end
 
-  def stats_results
+  def run_analysis
     generate_stats
     results_to_json
   end
