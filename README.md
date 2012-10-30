@@ -16,7 +16,7 @@ The application will be running in port 9393:
 Set up
 ============
 
-Install starspan (http://starspan.projects.atlas.ca.gov/)
+Install starspan 1.2.06 or above (http://starspan.projects.atlas.ca.gov/). The 1.2.06 git repository is in https://github.com/Ecotrust/starspan. You may need GEOS <= 3.2 (http://trac.osgeo.org/geos/) and GDAL (http://www.gdal.org/) to install it.
 
 Place your raster layers inside the <em>rasters</em> folder. The rasters should be split into three folders, based on their resolution: <em>high_resolution</em>, <em>medium_resolution</em>, and <em>low_resolution</em>.
 
