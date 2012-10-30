@@ -13,8 +13,8 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
-./results/*.csv
-./polygons/*.geojson
+results/*.csv
+polygons/*.geojson
 
 # YARD artifacts
 .yardoc
