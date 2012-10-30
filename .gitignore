@@ -15,6 +15,7 @@ test/version_tmp
 tmp
 results/*.csv
 polygons/*.geojson
+.DS_Store
 
 # YARD artifacts
 .yardoc
