@@ -51,4 +51,12 @@ default_run_options[:pty] = true # Must be set for the password prompt from git 
 #
 # The shared area is prepared with 'deploy:setup' and all the shared
 # items are symlinked in when the code is updated.
-#set :local_shared_files, %w()
+set :local_shared_dirs, %w(tmp public)
+
+namespace :deploy do
+  namespace :rake_tasks do
+    task :singleton, :roles => :db, :only => {:primary => true} do
+      puts "do nothing"
+    end
+  end
+end

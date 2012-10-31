@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    brightbox (2.3.9)
+      capistrano (>= 2.5)
     capistrano (2.12.0)
       highline
       net-scp (>= 1.0.0)
@@ -32,6 +34,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  brightbox (> 2.3.8)
   capistrano
   capistrano-ext
   shotgun
