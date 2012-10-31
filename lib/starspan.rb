@@ -50,13 +50,16 @@ class Starspan
       puts result
       result
     else 
-      {:error => 'The application failed to generate the requested stats.'}
+      {:error => 'The application failed to process the analysis stats.'}
     end
   end
 
   def run_analysis
-    generate_stats
-    results_to_json
+    if generate_stats
+      results_to_json
+    else
+      {:error => 'The application failed to run your analysis' }
+    end
   end
 
 end		
