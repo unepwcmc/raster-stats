@@ -50,7 +50,7 @@ class Starspan
       puts result
       result
     else 
-      {}
+      {:error => 'The application failed to generate the requested stats.'}
     end
   end
 
