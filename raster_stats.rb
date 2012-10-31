@@ -16,5 +16,4 @@ class RasterStats < Sinatra::Base
     end
     Starspan.new({:polygon_file=>polygon_file,:polygon=>polygon, :identifier=>identifier}).run_analysis
   end
-
 end
