@@ -30,9 +30,9 @@ class Starspan
 
   def run_analysis
     if generate_stats
-      results_to_json
+      results_to_hash
     else
-      {:error => 'The application failed to run your analysis' }.to_json
+      {:error => 'The application failed to run your analysis' }
     end
   end
 
@@ -44,7 +44,7 @@ class Starspan
     system(call)
   end
 
-  def results_to_json
+  def results_to_hash
     if File.file?("#{RESULTS_PATH}#{identifier}.csv")
       puts "File generated successfuly"
       csv_table = CSV.read("#{RESULTS_PATH}#{identifier}.csv", {headers: true})
@@ -56,11 +56,11 @@ class Starspan
         end
         list << entry
       end
-      result = JSON.pretty_generate(list)
-      puts result
-      result
+      #result = JSON.pretty_generate(list)
+      puts list
+      list
     else 
-      {:error => 'The application failed to process the analysis stats.'}.to_json
+      {:error => 'The application failed to process the analysis stats.'}
     end
   end
 end		

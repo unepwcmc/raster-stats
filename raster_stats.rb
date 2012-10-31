@@ -15,6 +15,6 @@ class RasterStats < Sinatra::Base
     rescue Exception => e
       return { :error => "There was an error parsing your polygon, make sure that it is in GeoJSON. You provided: #{params[:polygon]}" }.to_json
     end
-    Starspan.new({:polygon_file=>polygon_file,:polygon=>polygon, :identifier=>identifier}).run_analysis
+    JSON.pretty_generate(Starspan.new({:polygon_file=>polygon_file,:polygon=>polygon, :identifier=>identifier}).run_analysis)
   end
 end
