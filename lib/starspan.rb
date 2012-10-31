@@ -28,6 +28,16 @@ class Starspan
     end
   end
 
+  def run_analysis
+    if generate_stats
+      results_to_json
+    else
+      {:error => 'The application failed to run your analysis' }
+    end
+  end
+
+  private
+
   def generate_stats
     call = "#{STARSPAN} --vector '#{polygon_file}' --raster #{raster_path} --stats #{STATS} --out-prefix #{RESULTS_PATH} --out-type table --summary-suffix #{identifier}.csv"
     puts call
@@ -53,13 +63,4 @@ class Starspan
       {:error => 'The application failed to process the analysis stats.'}
     end
   end
-
-  def run_analysis
-    if generate_stats
-      results_to_json
-    else
-      {:error => 'The application failed to run your analysis' }
-    end
-  end
-
 end		
