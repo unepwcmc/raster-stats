@@ -1,4 +1,4 @@
-raster-stats
+raster-stats <a href="https://codeclimate.com/github/unepwcmc/raster-stats"><img src="https://codeclimate.com/badge.png" /></a>
 ============
 
 Sinatra app to calculate intersection between polygons and rasters.
