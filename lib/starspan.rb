@@ -1,4 +1,4 @@
-class Starspan 
+class Starspan
   require 'csv'
   require 'json'
 
@@ -7,15 +7,20 @@ class Starspan
   MEDIUM_RES_PATH = 'raster/medium_resolution/'
   HIGH_RES_PATH = 'raster/high_resolution/'
   RESULTS_PATH= 'results/raster_'
+  POLYGON_PATH = 'polygons/'
   STATS =  "avg sum"
 
-  attr_accessor :polygon_file, :polygon, :identifier, :raster_path
-
   def initialize(options)
-    @polygon_file = options[:polygon_file]
-    @polygon = options[:polygon]
-    @identifier = options[:identifier]
+    @identifier = Time.now.getutc.to_i
+    @polygon = JSON.parse(options[:polygon])
+    @polygon_file = polygon_to_file(options[:polygon])
     @raster_path = choose_raster(@polygon["features"][0]["properties"]["AREA"])
+  end
+
+  def polygon_to_file polygon
+    polygon_file = "#{POLYGON_PATH}#{@identifier}.geojson"
+    File.open(polygon_file, 'w'){|f| f.write(polygon)}
+    polygon_file
   end
 
   def choose_raster(area)
@@ -39,15 +44,15 @@ class Starspan
   private
 
   def generate_stats
-    call = "#{STARSPAN} --vector '#{polygon_file}' --raster #{raster_path} --stats #{STATS} --out-prefix #{RESULTS_PATH} --out-type table --summary-suffix #{identifier}.csv"
+    call = "#{STARSPAN} --vector '#{@polygon_file}' --raster #{@raster_path} --stats #{STATS} --out-prefix #{RESULTS_PATH} --out-type table --summary-suffix #{@identifier}.csv"
     puts call
     system(call)
   end
 
   def results_to_hash
-    if File.file?("#{RESULTS_PATH}#{identifier}.csv")
+    if File.file?("#{RESULTS_PATH}#{@identifier}.csv")
       puts "File generated successfuly"
-      csv_table = CSV.read("#{RESULTS_PATH}#{identifier}.csv", {headers: true})
+      csv_table = CSV.read("#{RESULTS_PATH}#{@identifier}.csv", {headers: true})
       list = []
       csv_table.each do |row|
         entry = {}
