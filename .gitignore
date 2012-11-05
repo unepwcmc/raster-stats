@@ -1,3 +1,6 @@
+*.ige
+*.img.aux.xml
+*.img
 *.tif
 *.swp
 *.gem

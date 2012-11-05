@@ -1,6 +1,7 @@
 class Starspan
   require 'csv'
   require 'json'
+  require 'generate_rasters'
 
   STARSPAN = 'starspan'
   LOW_RES_PATH = 'raster/low_resolution/'
@@ -24,12 +25,13 @@ class Starspan
   end
 
   def choose_raster(area)
-    if area > 9_000_000_000_000
-      LOW_RES_PATH + 'carbon.tif'
-    elsif area > 600_000_000_000
-      MEDIUM_RES_PATH + 'carbon.tif'
+    rasteri = JSON.parse(File.read('create_raster.rb', 'rb').read)
+    if area/(rasteri["pixel_high_res"]*rasteri["pixel_high_res"]) < 2_300_000
+      HIGH_RES_PATH + 'raster.tif'
+    elsif area/(rasteri["pixel_medium_res"]*rasteri["pixel_medium_res"]) < 2_300_000
+      MEDIUM_RES_PATH + 'raster.tif'
     else
-      HIGH_RES_PATH + 'carbon.tif'
+      LOW_RES_PATH + 'raster.tif'
     end
   end
 
@@ -67,5 +69,5 @@ class Starspan
     else 
       {:error => 'The application failed to process the analysis stats.'}
     end
-  end
+	end
 end		
