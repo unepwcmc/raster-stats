@@ -1,7 +1,6 @@
 class Starspan
   require 'csv'
   require 'json'
-  require 'generate_rasters'
 
   STARSPAN = 'starspan'
   LOW_RES_PATH = 'raster/low_resolution/'
@@ -33,6 +32,7 @@ class Starspan
     else
       LOW_RES_PATH + 'raster.tif'
     end
+    puts
   end
 
   def run_analysis
