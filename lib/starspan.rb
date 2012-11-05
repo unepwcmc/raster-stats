@@ -44,7 +44,7 @@ class Starspan
   private
 
   def generate_stats
-    call = "#{STARSPAN} --vector '#{@polygon_file}' --raster #{@raster_path} --stats #{STATS} --out-prefix #{RESULTS_PATH} --out-type table --summary-suffix #{@identifier}.csv"
+    call = "#{STARSPAN} --vector '#{@polygon_file}' --raster #{@raster_path} --stats #{STATS} --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
     puts call
     system(call)
   end
