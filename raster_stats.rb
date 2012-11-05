@@ -1,6 +1,6 @@
 class RasterStats < Sinatra::Base
 
-  set :logging, true
+  enable :logging
 
   get '/' do
     'hello world'
