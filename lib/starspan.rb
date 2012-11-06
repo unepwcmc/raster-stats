@@ -23,16 +23,17 @@ class Starspan
     polygon_file
   end
 
-  def choose_raster(area)
-    rasteri = JSON.parse(File.read('create_raster.rb', 'rb').read)
-    if area/(rasteri["pixel_high_res"]*rasteri["pixel_high_res"]) < 2_300_000
-      HIGH_RES_PATH + 'raster.tif'
-    elsif area/(rasteri["pixel_medium_res"]*rasteri["pixel_medium_res"]) < 2_300_000
-      MEDIUM_RES_PATH + 'raster.tif'
-    else
-      LOW_RES_PATH + 'raster.tif'
-    end
-    puts
+  def self.choose_raster#(area)
+    rasteri = JSON.parse(File.read('../raster/raster_info.json'))
+    puts rasteri
+    #if area/(rasteri["pixel_high_res"]*rasteri["pixel_high_res"]) < 2_300_000
+    #HIGH_RES_PATH + 'raster.tif'
+    #elsif area/(rasteri["pixel_medium_res"]*rasteri["pixel_medium_res"]) < 2_300_000
+    #MEDIUM_RES_PATH + 'raster.tif'
+    #else
+    # LOW_RES_PATH + 'raster.tif'
+    #end
+    #puts
   end
 
   def run_analysis

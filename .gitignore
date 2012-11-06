@@ -18,6 +18,7 @@ test/version_tmp
 tmp
 results/*.csv
 polygons/*.geojson
+raster/*.json
 .DS_Store
 
 # YARD artifacts
