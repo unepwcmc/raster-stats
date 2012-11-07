@@ -3,12 +3,11 @@ class Starspan
   require 'json'
 
   STARSPAN = 'starspan'
-  LOW_RES_PATH = 'raster/low_resolution/'
-  MEDIUM_RES_PATH = 'raster/medium_resolution/'
-  HIGH_RES_PATH = 'raster/high_resolution/'
+  RASTER_PATH = '../raster/'
   RESULTS_PATH= 'results/raster_'
   POLYGON_PATH = 'polygons/'
-  STATS =  "avg sum"
+  STATS = "avg sum"
+  PIXELS_PROCESSED = 2_300_000
 
   def initialize(options)
     @identifier = Time.now.getutc.to_i
@@ -23,17 +22,17 @@ class Starspan
     polygon_file
   end
 
-  def self.choose_raster#(area)
-    rasteri = JSON.parse(File.read('../raster/raster_info.json'))
-    puts rasteri
-    #if area/(rasteri["pixel_high_res"]*rasteri["pixel_high_res"]) < 2_300_000
-    #HIGH_RES_PATH + 'raster.tif'
-    #elsif area/(rasteri["pixel_medium_res"]*rasteri["pixel_medium_res"]) < 2_300_000
-    #MEDIUM_RES_PATH + 'raster.tif'
-    #else
-    # LOW_RES_PATH + 'raster.tif'
-    #end
-    #puts
+  def self.choose_raster(area)
+    raster_hash = JSON.parse(File.read(RASTER_PATH + 'raster_info.json'))
+    high_pixel_area = rasteri["pixel_size"]*rasteri["pixel_size"]
+    medium_pixel_area=high_pixel_area*rasteri["medium_res_value"]/100*rasteri["medium_res_value"]/100
+    if area/high_pixel_area < PIXELS_PROCESSED
+      raster_hash["high_res_path"] + rasteri["file_name"]
+    elsif area/medium_pixel_area < PIXELS_PROCESSED
+      raster_hash["medium_res_path"] + rasteri["file_name"]
+    else
+      raster_hash["low_res_path"] + rasteri["file_name"]
+    end
   end
 
   def run_analysis
@@ -67,8 +66,8 @@ class Starspan
       #result = JSON.pretty_generate(list)
       puts list
       list
-    else 
+    else
       {:error => 'The application failed to process the analysis stats.'}
     end
-	end
-end		
+  end
+end	

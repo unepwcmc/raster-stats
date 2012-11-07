@@ -1,3 +1,6 @@
+ Need to Adapt to different rasters input
+# Delete repeated lines on json
+
 class CreateRaster
 
   require 'gdal-ruby/gdal'
@@ -23,7 +26,9 @@ class CreateRaster
       "pixel_size" => geotransform[1],
       "high_res_path" => HIGH_RES_PATH,
       "medium_res_path" => MEDIUM_RES_PATH,
-      "low_res_path" => LOW_RES_PATH
+      "low_res_path" => LOW_RES_PATH,
+      "medium_res_value" => MEDIUM_RES_VALUE,
+      "low_res_value" => LOW_RES_VALUE
     }
     File.open("../raster/raster_info.json","a") do |f|
       f.write(pixel_hash.to_json)
