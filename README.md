@@ -21,6 +21,11 @@ Install starspan 1.2.06 or above (http://starspan.projects.atlas.ca.gov/). The 1
 Place your raster layers inside the <em>rasters</em> folder. The rasters should be split into three folders, based on their resolution: <em>high_resolution</em>, <em>medium_resolution</em>, and <em>low_resolution</em>.
 
 
+Raster Management
+======================
+Place your raster on /raster/input
+Browse to http://localhost:9393/upload/RASTERNAME
+
 Example
 ===========
 

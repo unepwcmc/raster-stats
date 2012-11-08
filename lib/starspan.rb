@@ -3,7 +3,7 @@ class Starspan
   require 'json'
 
   STARSPAN = 'starspan'
-  RASTER_PATH = '../raster/'
+  RASTER_PATH = '/raster/'
   RESULTS_PATH= 'results/raster_'
   POLYGON_PATH = 'polygons/'
   STATS = "avg sum"
@@ -22,16 +22,16 @@ class Starspan
     polygon_file
   end
 
-  def self.choose_raster(area)
+  def choose_raster(area)
     raster_hash = JSON.parse(File.read(RASTER_PATH + 'raster_info.json'))
-    high_pixel_area = rasteri["pixel_size"]*rasteri["pixel_size"]
-    medium_pixel_area=high_pixel_area*rasteri["medium_res_value"]/100*rasteri["medium_res_value"]/100
+    high_pixel_area = raster_hash["pixel_size"]*raster_hash["pixel_size"]
+    medium_pixel_area=high_pixel_area*raster_hash["medium_res_value"]/100*raster_hash["medium_res_value"]/100
     if area/high_pixel_area < PIXELS_PROCESSED
-      raster_hash["high_res_path"] + rasteri["file_name"]
+      raster_hash["high_res_path"] + raster_hash["file_name"]
     elsif area/medium_pixel_area < PIXELS_PROCESSED
-      raster_hash["medium_res_path"] + rasteri["file_name"]
+      raster_hash["medium_res_path"] + raster_hash["file_name"]
     else
-      raster_hash["low_res_path"] + rasteri["file_name"]
+      raster_hash["low_res_path"] + raster_hash["file_name"]
     end
   end
 
