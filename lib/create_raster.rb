@@ -15,7 +15,7 @@ class CreateRaster
   OUTPUT_EXTENSION = '.img'
   GDALTRANSLATE = 'gdal_translate'
   MEDIUM_RES_VALUE = 50
-  LOW_RES_VALUE = 10
+  LOW_RES_VALUE = 20
 
   def initialize(options)
     @input_file = options[:filename]
@@ -33,7 +33,7 @@ class CreateRaster
       "medium_res_value" => MEDIUM_RES_VALUE,
       "low_res_value" => LOW_RES_VALUE
     }
-    File.open("raster/raster_info.json","a") do |f|
+    File.open("raster/info/#{@input_file}.json","w") do |f|
       f.write(pixel_hash.to_json)
     end
   end
@@ -45,6 +45,16 @@ class CreateRaster
     system(generate_high)
     system(generate_medium)
     system(generate_low)
+  end
+
+  def raster_manager
+    if
+      pixel_size
+      generate_rasters
+      return 'Raster Uploaded with success!'
+    else
+        {:error => 'The application failed upload your rasster' }
+    end
   end
 
 end
