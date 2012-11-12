@@ -15,27 +15,24 @@ class RasterStats < Sinatra::Base
     end
   end
 
-  #Future possible uploading engine
-  #
-  #get '/upload' do
-  #  haml :upload
-  #end
-  #
-  #post '/upload' do
-  #  File.open('raster/input/' + params['myfile'][:filename], "w") do |f|
-  #    f.write(params['myfile'][:tempfile].read)
-  #    end
-  #    begin
-  #      CreateRaster.new({:filename=>params[:filename]}).generate_rasters
-  #    return "The file was successfully uploaded!"
-  #    end
-  #end
-  
-  get '/upload/:filename' do
-    begin
-      CreateRaster.new({:filename=>params[:filename]}).raster_manager
-      rescue Exception => e
-      return { :error => "There was an error importing your file, make sure its name and path are ok"} #### #{e.message}" }.to_json
-     end
+  get '/upload/' do
+    haml :upload
   end
+  
+  post '/upload/form' do
+    begin
+      CreateRaster.new({:raster_url=>params[:raster_url]}).raster_manager
+      return "The file was successfully uploaded!"
+    end
+  end
+  
+  #get '/upload/:filename' do
+  #  begin
+  #    CreateRaster.new({:filename=>params[:filename]}).raster_manager
+  #    rescue Exception => e
+  #    return { :error => "There was an error importing your file, make sure its name and path are ok"} #### #{e.message}" }.to_json
+  #   end
+  #end
+
+
 end

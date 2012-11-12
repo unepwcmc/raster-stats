@@ -4,6 +4,7 @@ class CreateRaster
 
   require 'gdal-ruby/gdal'
   require 'json'
+  require 'uri'
 
   #INPUT_FILE = 'input'
   #INPUT_EXTENSION = '.tif'
@@ -18,7 +19,13 @@ class CreateRaster
   LOW_RES_VALUE = 20
 
   def initialize(options)
-    @input_file = options[:filename]
+    @input_url = options[:raster_url]
+    @input_file = File.basename((URI.parse(options[:raster_url]).path))
+  end
+
+  def get_file
+    get_file = "wget -O #{INPUT_PATH}#{@input_file} #{@input_url}"
+    system(get_file)
   end
 
   def pixel_size
@@ -49,6 +56,7 @@ class CreateRaster
 
   def raster_manager
     if
+      get_file
       pixel_size
       generate_rasters
       return 'Raster Uploaded with success!'

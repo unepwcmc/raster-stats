@@ -1,7 +1,7 @@
 %html
   %body
     %h1 Raster Uploader
-    %form(method="post" enctype='multipart/form-data')   
-      %input(type='file' name='myfile')    
-      %br
-      %input(type='submit' value='Upload')
+    %h2 Please point to your Raster URL
+    %form{ :action => "form", :method => "post"}
+      %input{:type => "text", :name => "raster_url"}
+      %input{:type => "submit", :value => "Send", :class => "button"}
