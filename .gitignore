@@ -20,6 +20,7 @@ results/*.csv
 polygons/*.geojson
 raster/*.json
 raster/info/*.json
+raster/input/*
 .DS_Store
 
 # YARD artifacts
