@@ -1,4 +1,3 @@
-# Need to Adapt to different rasters input
 # Delete repeated lines on json
 class CreateRaster
 
@@ -19,12 +18,21 @@ class CreateRaster
   LOW_RES_VALUE = 20
 
   def initialize(options)
+    @input_loc = options[:raster_loc]
     @input_url = options[:raster_url]
-    @input_file = File.basename((URI.parse(options[:raster_url]).path))
+    if options[:raster_url]
+      @input_file = File.basename((URI.parse(options[:raster_url]).path))
+    else
+      @input_file = File.basename(@input_loc)
+    end
   end
 
-  def get_file
-    get_file = "wget -O #{INPUT_PATH}#{@input_file} #{@input_url}"
+  def copy_file
+    if @input_url
+      get_file = "wget -O #{INPUT_PATH}#{@input_file} #{@input_url}"
+    elsif
+      get_file = "cp #{@input_loc} #{INPUT_PATH}"
+    end
     system(get_file)
   end
 
@@ -56,7 +64,7 @@ class CreateRaster
 
   def raster_manager
     if
-      get_file
+      copy_file
       pixel_size
       generate_rasters
       return 'Raster Uploaded with success!'

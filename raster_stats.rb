@@ -6,25 +6,37 @@ class RasterStats < Sinatra::Base
     'hello world'
   end
 
-  get '/stats/:raster/:polygon' do
+  get '/stats/:stat/:raster/:polygon' do
     content_type :json
     begin
-      JSON.pretty_generate(Starspan.new({:raster=>params[:raster], :polygon=>params[:polygon]}).run_analysis)
-    rescue Exception => e
-      return { :error => "There was an error parsing your polygon, make sure that it is in GeoJSON. You provided: #{params[:polygon]} #### #{e.message}" }.to_json
+      JSON.pretty_generate(Starspan.new({:stat=>params[:stat], :raster=>params[:raster], :polygon=>params[:polygon]}).run_analysis)
+      #rescue Exception => e
+      #return { :error => "There was an error parsing your polygon, make sure that it is in GeoJSON. You provided: #{params[:polygon]} #### #{e.message}" }.to_json
     end
   end
 
-  get '/upload/' do
-    haml :upload
+  get '/externalupload/' do
+    haml :externalupload
   end
   
-  post '/upload/form' do
+  post '/externalupload/form' do
     begin
       CreateRaster.new({:raster_url=>params[:raster_url]}).raster_manager
       return "The file was successfully uploaded!"
     end
   end
+
+  get '/internalupload/' do
+    haml :internalupload
+  end
+  
+  post '/internalupload/form' do
+    begin
+      CreateRaster.new({:raster_loc=>params[:raster_loc]}).raster_manager
+      return "The file was successfully uploaded!"
+    end
+  end
+
   
   #get '/upload/:filename' do
   #  begin
