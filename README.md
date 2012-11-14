@@ -1,7 +1,7 @@
 raster-stats <a href="https://codeclimate.com/github/unepwcmc/raster-stats"><img src="https://codeclimate.com/badge.png" /></a>
 ============
 
-Sinatra app to calculate intersection between polygons and rasters.
+Sinatra app to calculate intersection stats between polygons and rasters.
 
 
 Start it
@@ -21,8 +21,11 @@ Install starspan 1.2.06 or above (http://starspan.projects.atlas.ca.gov/). The 1
 
 Raster Management
 ======================
-Place your raster on <em>/raster/input/</em>
-Browse to <em>http://localhost:9393/upload/RASTERNAME</em>
+If you want to upload a raster from an external server:
+Browse to <em>http://localhost:9393/externalupload/</em>
+
+If you want to use a local raster:
+Browse to <em>http://localhost:9393/internalupload/</em>
 
 The rasters are split into three folders, based on their resolution: <em>high_resolution</em>,  <em> medium_resolution</em>, and <em>low_resolution</em> and it is created a json file on <em>info/</em> folder.
 
@@ -31,7 +34,11 @@ Example
 
 After starting the server, point your browser to:
 
-http://localhost:9393/stats/RASTERNAME/{"type": "FeatureCollection","features": [{ "type": "Feature", "id": 0, "properties": { "id": null, "name": 8, "AREA": 7435.85032686457 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -55.199133830905097, 14.166474645080788 ], [ -139.868730478081005, 21.093987098031544 ], [ -166.295907613411686, 80.619279286349169 ], [ -19.022124354384474, 82.671875568704948 ], [ -55.199133830905097, 14.166474645080788 ] ] ] } }]}
+http://localhost:9393/STATS/RASTERNAME/{"type": "FeatureCollection","features": [{ "type": "Feature", "id": 0, "properties": { "id": null, "name": 8, "AREA": 7435.85032686457 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -55.199133830905097, 14.166474645080788 ], [ -139.868730478081005, 21.093987098031544 ], [ -166.295907613411686, 80.619279286349169 ], [ -19.022124354384474, 82.671875568704948 ], [ -55.199133830905097, 14.166474645080788 ] ] ] } }]}
+
+Replace STATS with "avg", "sum", "max" or "min".
+
+Replace RASTERNAME with the name of the raster file including extension.
 
 This example uses a massive polygon, so the application will use the low resolution raster.
 
