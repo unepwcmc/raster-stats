@@ -15,7 +15,7 @@ class CreateRaster
   OUTPUT_EXTENSION = '.img'
   GDALTRANSLATE = 'gdal_translate'
   MEDIUM_RES_VALUE = 50
-  LOW_RES_VALUE = 20
+  LOW_RES_VALUE = 10
 
   def initialize(options)
     @input_loc = options[:raster_loc]
@@ -54,9 +54,11 @@ class CreateRaster
   end
 
   def generate_rasters
-    generate_high = "#{GDALTRANSLATE} -of #{FILE_TYPE} #{INPUT_PATH}#{@input_file}  #{HIGH_RES_PATH}#{@input_file}#{OUTPUT_EXTENSION}"
-    generate_medium = "#{GDALTRANSLATE} -outsize #{MEDIUM_RES_VALUE}% #{MEDIUM_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}#{@input_file}  #{MEDIUM_RES_PATH}#{@input_file}#{OUTPUT_EXTENSION}"
-    generate_low = "#{GDALTRANSLATE} -outsize #{LOW_RES_VALUE}% #{LOW_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}#{@input_file} #{LOW_RES_PATH}#{@input_file}#{OUTPUT_EXTENSION}"
+    no_data = "gdalwarp #{INPUT_PATH}#{@input_file} #{INPUT_PATH}ndata_#{@input_file} -dstnodata 0"
+    generate_high = "#{GDALTRANSLATE} -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{@input_file}  #{HIGH_RES_PATH}#{@input_file}#{OUTPUT_EXTENSION}"
+    generate_medium = "#{GDALTRANSLATE} -outsize #{MEDIUM_RES_VALUE}% #{MEDIUM_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{@input_file}  #{MEDIUM_RES_PATH}#{@input_file}#{OUTPUT_EXTENSION}"
+    generate_low = "#{GDALTRANSLATE} -outsize #{LOW_RES_VALUE}% #{LOW_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{@input_file} #{LOW_RES_PATH}#{@input_file}#{OUTPUT_EXTENSION}"
+    system(no_data)
     system(generate_high)
     system(generate_medium)
     system(generate_low)

@@ -70,13 +70,6 @@ class Starspan
     call = "#{STARSPAN} --vector #{@polygon_file} --raster #{@raster_path} --stats avg sum --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
     puts
     system(call)
-  #  if @res_used == "high"
-  #    system(call)
-  #  elsif @res_used == "medium"
-  #    system(call)*@raster_hash["pixel_size"]*(100/(@raster_hash["medium_res_value"]))
-  #  else
-  #    system(call)*@raster_hash["pixel_size"]*(100/(@raster_hash["low_res_value"]))
-  #  end
   end
 
   def generate_max
@@ -104,6 +97,8 @@ class Starspan
               entry[header] = row[header].to_f * @raster_hash["pixel_size"]*(100/(@raster_hash["medium_res_value"]))
             elsif @res_used == 'low'
               entry[header] = row[header].to_f * @raster_hash["pixel_size"]*(100/(@raster_hash["low_res_value"]))
+            else
+              entry[header] = row[header]
             end
           else
             entry[header] = row[header]
