@@ -2,6 +2,6 @@
   %body
     %h1 Raster Uploader
     %h2 Please point to your Raster URL
-    %form{ :action => "form", :method => "post"}
+    %form{ :action => "/uploads/external", :method => "post"}
       %input{:type => "text", :name => "raster_url"}
       %input{:type => "submit", :value => "Send", :class => "button"}

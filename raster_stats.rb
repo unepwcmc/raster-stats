@@ -1,9 +1,18 @@
 class RasterStats < Sinatra::Base
 
-  enable :logging
+  configure :production, :development do
+    enable :logging
+  end
 
   get '/' do
-    'hello world'
+    "
+     <h1>Raster Stats</h1>
+     <h2>Add a Raster</h2>
+     <ul>
+      <li><a href='/uploads/external'>from URL</a></li>
+      <li><a href='/uploads/internal'>from your computer</a></li>
+     </ul>
+    "
   end
 
   get '/stats/:stat/:raster/:polygon' do
@@ -15,36 +24,26 @@ class RasterStats < Sinatra::Base
     end
   end
 
-  get '/externalupload/' do
-    haml :externalupload
+  get '/uploads/external' do
+    haml :external_upload
   end
-  
-  post '/externalupload/form' do
+
+  post '/uploads/external' do
     begin
       CreateRaster.new({:raster_url=>params[:raster_url]}).raster_manager
       return "The file was successfully uploaded!"
     end
   end
 
-  get '/internalupload/' do
-    haml :internalupload
+  get '/uploads/internal' do
+    haml :internal_upload
   end
-  
-  post '/internalupload/form' do
+
+  post '/uploads/internal' do
     begin
       CreateRaster.new({:raster_loc=>params[:raster_loc]}).raster_manager
       return "The file was successfully uploaded!"
     end
   end
-
-  
-  #get '/upload/:filename' do
-  #  begin
-  #    CreateRaster.new({:filename=>params[:filename]}).raster_manager
-  #    rescue Exception => e
-  #    return { :error => "There was an error importing your file, make sure its name and path are ok"} #### #{e.message}" }.to_json
-  #   end
-  #end
-
 
 end
