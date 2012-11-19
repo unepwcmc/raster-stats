@@ -1,5 +1,5 @@
 # Delete repeated lines on json
-class CreateRaster
+class Raster
 
   require 'gdal-ruby/gdal'
   require 'json'
