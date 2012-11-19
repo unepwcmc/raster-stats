@@ -20,8 +20,9 @@ class Raster
   def initialize(options)
     @input_loc = options[:raster_loc]
     @input_url = options[:raster_url]
-    if options[:raster_url]
-      @input_file = File.basename((URI.parse(options[:raster_url]).path))
+    @display_name = options[:display_name] 
+    if @input_url
+      @input_file = File.basename((URI.parse(@input_url).path))
     else
       @input_file = File.basename(@input_loc)
     end
@@ -40,6 +41,7 @@ class Raster
     file = Gdal::Gdal.open( INPUT_PATH + @input_file )
     geotransform = file.get_geo_transform()
     pixel_hash = {
+      "display_name" => @display_name,
       "file_name" => @input_file + OUTPUT_EXTENSION,
       "pixel_size" => geotransform[1],
       "high_res_path" => HIGH_RES_PATH,

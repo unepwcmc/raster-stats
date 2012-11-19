@@ -30,7 +30,7 @@ class RasterStats < Sinatra::Base
 
   post '/uploads/external' do
     begin
-      Raster.new({:raster_url=>params[:raster_url]}).raster_manager
+      Raster.new(params).raster_manager
       return "The file was successfully uploaded!"
     end
   end
@@ -40,10 +40,8 @@ class RasterStats < Sinatra::Base
   end
 
   post '/uploads/internal' do
-    begin
-      Raster.new({:raster_loc=>params[:raster_loc]}).raster_manager
-      return "The file was successfully uploaded!"
-    end
+    Raster.new(params).raster_manager
+    return "The file was successfully uploaded!"
   end
 
 end
