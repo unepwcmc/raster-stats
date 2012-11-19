@@ -27,3 +27,4 @@ raster/input/*
 .yardoc
 _yardoc
 doc/
+*.*~
