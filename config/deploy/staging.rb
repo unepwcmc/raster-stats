@@ -1,6 +1,5 @@
 # Primary domain name of your application. Used in the Apache configs
-set :domain, "unepwcmc-005.vm.brightbox.net"
+set :domain, "raster-stats.unep-wcmc.org"
 
 ## List of servers
-server "unepwcmc-005.vm.brightbox.net", :app, :web, :db, :primary => true
-
+server "raster-stats", :app, :web, :db, :primary => true
