@@ -26,11 +26,11 @@ test/version_tmp
 /log/*.log
 /tmp
 
-results/*.csv
-polygons/*.geojson
-raster/*.json
-raster/info/*.json
-raster/input/*
+lib/results/*.csv
+lib/polygons/*.geojson
+lib/assets/raster/*.json
+lib/assets/raster/info/*.json
+lib/assets/raster/input/*
 
 # YARD artifacts
 .yardoc
