@@ -50,7 +50,7 @@ class Raster
       "medium_res_value" => MEDIUM_RES_VALUE,
       "low_res_value" => LOW_RES_VALUE
     }
-    File.open("raster/info/#{@input_file}.json","w") do |f|
+    File.open("raster/db.json","a") do |f|
       f.write(pixel_hash.to_json)
     end
   end
