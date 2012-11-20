@@ -1,0 +1,31 @@
+<h1>Listing rasters</h1>
+
+<table>
+  <tr>
+    <th>Display name</th>
+    <th>File name</th>
+    <th>Basename</th>
+    <th>Pixel size</th>
+    <th>Input loc</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @rasters.each do |raster| %>
+  <tr>
+    <td><%= raster.display_name %></td>
+    <td><%= raster.file_name %></td>
+    <td><%= raster.basename %></td>
+    <td><%= raster.pixel_size %></td>
+    <td><%= raster.input_loc %></td>
+    <td><%= link_to 'Show', raster %></td>
+    <td><%= link_to 'Edit', edit_raster_path(raster) %></td>
+    <td><%= link_to 'Destroy', raster, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Raster', new_raster_path %>

@@ -3,19 +3,14 @@ class Starspan
   require 'json'
 
   STARSPAN = 'starspan'
-  RASTER_PATH = 'raster/'
-  INFO_PATH = 'info/'
-  RESULTS_PATH= 'results/raster_'
-  POLYGON_PATH = 'polygons/'
   PIXELS_PROCESSED = 2_300_000
 
   def initialize(options)
-    @raster = options[:raster]
+    @raster = Raster.find(options[:raster_id])
     @stat = options[:stat]
     @identifier = Time.now.getutc.to_i
     @polygon = JSON.parse(options[:polygon])
     @polygon_file = polygon_to_file(options[:polygon])
-    @raster_hash = JSON.parse(File.read(RASTER_PATH + INFO_PATH + @raster + '.json'))
     @raster_path, @res_used = choose_raster(@polygon["features"][0]["properties"]["AREA"])
   end
 
@@ -36,14 +31,14 @@ class Starspan
   end
 
   def choose_raster(area)
-    high_res_path = @raster_hash["high_res_path"] + @raster_hash["file_name"]
-    medium_res_path = @raster_hash["medium_res_path"] + @raster_hash["file_name"]
-    low_res_path = @raster_hash["low_res_path"] + @raster_hash["file_name"]
-    high_pixel_area = @raster_hash["pixel_size"]*@raster_hash["pixel_size"]
-    medium_pixel_area = high_pixel_area*@raster_hash["medium_res_value"]/100*@raster_hash["medium_res_value"]/100
+    high_res_path = HIGH_RES_PATH + @raster.file_name
+    medium_res_path = MEDIUM_RES_PATH + @raster.file_name
+    low_res_path = LOW_RES_PATH + @raster.file_name
+    high_pixel_area = @raster.pixel_size*@raster.pixel_size
+    medium_pixel_area = high_pixel_area*MEDIUM_RES_VALUE/100*MEDIUM_RES_VALUE/100
     if area/high_pixel_area < PIXELS_PROCESSED
       [high_res_path, "high"]
-    elsif area/medium_pixel_area < PIXELS_PROCESSED
+    elsif area.to_f/medium_pixel_area < PIXELS_PROCESSED
       [medium_res_path, "medium"]
     else
       [low_res_path, "low"]

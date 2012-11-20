@@ -1,0 +1,25 @@
+<%= form_for(@raster) do |f| %>
+  <% if @raster.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@raster.errors.count, "error") %> prohibited this raster from being saved:</h2>
+
+      <ul>
+      <% @raster.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :display_name %><br />
+    <%= f.text_field :display_name %>
+  </div>
+  <div class="field">
+    <%= f.label :input_loc %><br />
+    <%= f.text_field :input_loc %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

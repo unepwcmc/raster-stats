@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Display name:</b>
+  <%= @raster.display_name %>
+</p>
+
+<p>
+  <b>File name:</b>
+  <%= @raster.file_name %>
+</p>
+
+<p>
+  <b>Basename:</b>
+  <%= @raster.basename %>
+</p>
+
+<p>
+  <b>Pixel size:</b>
+  <%= @raster.pixel_size %>
+</p>
+
+<p>
+  <b>Input loc:</b>
+  <%= @raster.input_loc %>
+</p>
+
+<%= link_to 'Edit', edit_raster_path(@raster) %> |
+<%= link_to 'Back', rasters_path %>

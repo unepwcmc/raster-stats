@@ -2,27 +2,35 @@
 *.img.aux.xml
 *.img
 *.tif
-*.swp
-*.gem
 *.rbc
 *.adf
+
+.DS_Store
+*.swp
+*.gem
 .bundle
 .config
+
 coverage
 InstalledFiles
 lib/bundler/man
 pkg
 rdoc
-spec/reports
 test/tmp
 test/version_tmp
-tmp
+
+# Ignore the default SQLite database.
+/db/*.sqlite3
+
+# Ignore all logfiles and tempfiles.
+/log/*.log
+/tmp
+
 results/*.csv
 polygons/*.geojson
 raster/*.json
 raster/info/*.json
 raster/input/*
-.DS_Store
 
 # YARD artifacts
 .yardoc
