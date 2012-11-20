@@ -1,5 +1,5 @@
 set :stages, %w(production staging)
-set :default_stage, 'staging'
+set :default_stage, 'production'
 require 'capistrano/ext/multistage'
 
 # RVM bootstrap
