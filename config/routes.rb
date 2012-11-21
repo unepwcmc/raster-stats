@@ -1,4 +1,6 @@
 RasterStats::Application.routes.draw do
+  resources :operations
+
   resources :rasters
   match '/rasters/:id/stats/:stat' => 'rasters#stats', :as => :stats
 
