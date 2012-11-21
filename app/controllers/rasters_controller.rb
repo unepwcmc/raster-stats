@@ -82,10 +82,7 @@ class RastersController < ApplicationController
   end
 
   def stats
-    begin
-      render :json => JSON.pretty_generate(Starspan.new({:stat => params[:stat], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
-    rescue Exception => e
-      render :json => { :error => "There was an error parsing your polygon, make sure that it is in GeoJSON. You provided: #{params[:polygon]} #### #{e.message}" }.to_json
-    end
+    render :json => JSON.pretty_generate(Starspan.new({:stat => params[:stat], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
+    #render :json => JSON.pretty_generate(Starspan.new({:operation => params[:operation], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
   end
 end
