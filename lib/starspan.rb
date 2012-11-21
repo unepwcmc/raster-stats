@@ -87,9 +87,9 @@ class Starspan
         csv_table.headers.each do |header|
           if header.start_with?("sum")
             if @res_used == 'medium'
-              entry[header] = row[header].to_f * @raster_hash["pixel_size"]*(100/(MEDIUM_RES_VALUE))
+              entry[header] = row[header].to_f * @raster.pixel_size*(100/(MEDIUM_RES_VALUE))
             elsif @res_used == 'low'
-              entry[header] = row[header].to_f * @raster_hash["pixel_size"]*(100/(LOW_RES_VALUE))
+              entry[header] = row[header].to_f * @raster.pixel_size*(100/(LOW_RES_VALUE))
             else
               entry[header] = row[header]
             end
