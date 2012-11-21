@@ -66,13 +66,13 @@ class Starspan
   end
 
   def generate_max
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{@raster_hash["high_res_path"] + @raster_hash["file_name"]} --stats max --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
+    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster_hash["file_name"]} --stats max --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
     puts call
     system(call)
   end
 
   def generate_min
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{@raster_hash["high_res_path"] + @raster_hash["file_name"]} --stats min --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
+    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster_hash["file_name"]} --stats min --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
     puts call
     system(call)
   end
@@ -87,9 +87,9 @@ class Starspan
         csv_table.headers.each do |header|
           if header.start_with?("sum")
             if @res_used == 'medium'
-              entry[header] = row[header].to_f * @raster_hash["pixel_size"]*(100/(@raster_hash["medium_res_value"]))
+              entry[header] = row[header].to_f * @raster.pixel_size*(100/(MEDIUM_RES_VALUE))
             elsif @res_used == 'low'
-              entry[header] = row[header].to_f * @raster_hash["pixel_size"]*(100/(@raster_hash["low_res_value"]))
+              entry[header] = row[header].to_f * @raster.pixel_size*(100/(LOW_RES_VALUE))
             else
               entry[header] = row[header]
             end
