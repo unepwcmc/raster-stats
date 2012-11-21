@@ -61,7 +61,7 @@ class Starspan
 
   def generate_sum
     call = "#{STARSPAN} --vector #{@polygon_file} --raster #{@raster_path} --stats avg sum --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
-    puts
+    puts call
     system(call)
   end
 
