@@ -51,19 +51,34 @@ namespace :sqlite3 do
     config_options = {"production" => db_options}.to_yaml
     put config_options, "#{shared_path}/config/sqlite_config.yml"
   end
- 
+
   desc "Links the configuration file"
   task :link_configuration_file, :roles => :db do
-    run "ln -nsf #{shared_path}/config/sqlite_config.yml #{release_path}/config/database.yml"
+    run "ln -nsf #{shared_path}/config/sqlite_config.yml #{latest_release}/config/database.yml"
   end
- 
+
   desc "Make a shared database folder"
   task :make_shared_folder, :roles => :db do
     run "mkdir -p #{shared_database_path}"
   end
 end
 
+# Rasters
+namespace :rasters do
+  desc "Links the rasters folder"
+  task :link_configuration_file, :roles => :db do
+    run "ln -s #{shared_path}/rasters #{latest_release}/rasters"
+  end
+
+  desc "Make a shared rasters folder"
+  task :make_shared_folder, :roles => :app do
+    run "mkdir -p #{shared_path}/rasters"
+  end
+end
+
 after "deploy:setup", "sqlite3:make_shared_folder"
 after "deploy:setup", "sqlite3:build_configuration"
+after "deploy:setup", "rasters:make_shared_folder"
  
 after "deploy:update_code", "sqlite3:link_configuration_file"
+after "deploy:update_code", "rasters:link_library_folder"

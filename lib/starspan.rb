@@ -15,8 +15,6 @@ class Starspan
   end
 
   def choose_stat
-    #sites = %w[stackoverflow stackexchange serverfault]
-    #=> ["stackoverflow", "stackexchange", "serverfault"]
     if ["sum", "avg", "max", "min"].include?(@stat)
       send("generate_#{@stat}")
     else 

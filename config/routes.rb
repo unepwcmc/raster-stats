@@ -1,8 +1,6 @@
 RasterStats::Application.routes.draw do
-
-  match '/rasters/:id/stats/:stat/*polygon' => 'rasters#stats'
-  match '/rasters/:id/stats/:stat' => 'rasters#stats'
   resources :rasters
+  match '/rasters/:id/stats/:stat' => 'rasters#stats', :as => :stats
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
