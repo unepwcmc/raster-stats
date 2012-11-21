@@ -39,4 +39,12 @@ class Raster < ActiveRecord::Base
     system(generate_medium)
     system(generate_low)
   end
+
+  def path(resolution)
+    "/home/decioferreira/Projects/ecoplotter/raster-stats/lib/assets/raster/input/GRAY_50M_SR.tif"
+  end
+
+  before_destroy do
+    puts "TODO: REMOVE raster file!"
+  end
 end

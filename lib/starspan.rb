@@ -32,6 +32,7 @@ class Starspan
     high_res_path = HIGH_RES_PATH + @raster.file_name
     medium_res_path = MEDIUM_RES_PATH + @raster.file_name
     low_res_path = LOW_RES_PATH + @raster.file_name
+
     high_pixel_area = @raster.pixel_size*@raster.pixel_size
     medium_pixel_area = high_pixel_area*MEDIUM_RES_VALUE/100*MEDIUM_RES_VALUE/100
     if area/high_pixel_area < PIXELS_PROCESSED
