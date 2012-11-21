@@ -43,7 +43,7 @@ class RastersController < ApplicationController
     @raster = Raster.new(params[:raster])
 
     respond_to do |format|
-      if @raster.calculate_extra_attributes_and_save
+      if @raster.save
         format.html { redirect_to @raster, notice: 'Raster was successfully created.' }
         format.json { render json: @raster, status: :created, location: @raster }
       else

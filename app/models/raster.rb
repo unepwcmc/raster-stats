@@ -1,50 +1,53 @@
 class Raster < ActiveRecord::Base
-  attr_accessible :display_name, :basename, :file_name, :input_loc, :pixel_size
+  require 'gdal-ruby/gdal'
 
-  after_create :generate_rasters
+  attr_accessible :name, :source_file
 
-  FILE_TYPE = 'HFA'
-  OUTPUT_EXTENSION = '.img'
-  GDALTRANSLATE = 'gdal_translate'
-
-  def calculate_extra_attributes_and_save
-    if input_loc.starts_with?('http')
-      self.basename = File.basename((URI.parse(self.input_loc).path))
-      get_file = "wget -O #{INPUT_PATH}#{self.basename} #{self.input_loc}"
-    elsif !File.file?(self.input_loc)
-      self.errors.add(:input_loc, "file does not exist.")
-      return false
-    else
-      self.basename = File.basename(self.input_loc)
-      get_file = "cp #{self.input_loc} #{INPUT_PATH}"
-    end
-    system(get_file)
-    self.pixel_size = Raster.pixel_size(INPUT_PATH+self.basename)
-    self.file_name = self.basename + OUTPUT_EXTENSION
-    self.save
+  def path(filename = 'default', img_extension = false)
+    "#{rasters_path}#{filename}.tif#{img_extension && '.img'}"
   end
 
-  def self.pixel_size file_path
-    file = Gdal::Gdal.open(file_path)
-    file.get_geo_transform()[1]
+  class << self
+    def gdal_translate_command
+      `which gdal_translate`.delete("\n")
+    end
+
+    def gdalwarp_command
+      `which gdalwarp`.delete("\n")
+    end
+  end
+
+  private
+
+  def extract_pixel_size
+    Gdal::Gdal.open(path).get_geo_transform()[1]
+  end
+
+  def rasters_path
+    Rails.root.join('lib', 'rasters', self.id).tap do |dir|
+      Dir.mkdir dir unless File.directory? dir
+    end
   end
 
   def generate_rasters
-    no_data = "gdalwarp #{INPUT_PATH}#{basename} #{INPUT_PATH}ndata_#{basename} -dstnodata 0"
-    generate_high = "#{GDALTRANSLATE} -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{basename}  #{HIGH_RES_PATH}#{basename}#{OUTPUT_EXTENSION}"
-    generate_medium = "#{GDALTRANSLATE} -outsize #{MEDIUM_RES_VALUE}% #{MEDIUM_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{basename}  #{MEDIUM_RES_PATH}#{basename}#{OUTPUT_EXTENSION}"
-    generate_low = "#{GDALTRANSLATE} -outsize #{LOW_RES_VALUE}% #{LOW_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{basename} #{LOW_RES_PATH}#{basename}#{OUTPUT_EXTENSION}"
-    system(no_data)
-    system(generate_high)
-    system(generate_medium)
-    system(generate_low)
+    system "#{gdalwarp_command} -dstnodata 0 #{path} #{path('ndata')}"
+    system "#{gdal_translate_command} -of HFA #{path('ndata')} #{path('high', true)}"
+    system "#{gdal_translate_command} -outsize 50% 50% -of HFA #{path('ndata')} #{path('medium', true)}"
+    system "#{gdal_translate_command} -outsize 10% 10% -of HFA #{path('ndata')} #{path('low', true)}"
   end
 
-  def path(resolution)
-    "/home/decioferreira/Projects/ecoplotter/raster-stats/lib/assets/raster/input/GRAY_50M_SR.tif"
-  end
+  after_create do
+    # TODO: add background jobs
+    if source_file =~ /^https?:\/\//
+      system("wget -O #{path} #{source_file}")
+    elsif File.file?(source_file)
+      system("cp #{source_file} #{path}"
+    else
+      raise(RuntimeError, "File not found...")
+    end
 
-  before_destroy do
-    puts "TODO: REMOVE raster file!"
+    self.update_attribute(:pixel_size, extract_pixel_size)
+    
+    generate_rasters
   end
 end

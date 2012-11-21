@@ -1,4 +1,4 @@
-class Operation < ActiveRecord::Base
+class Operation
   attr_reader :name, :display_name
 
   def self.all
