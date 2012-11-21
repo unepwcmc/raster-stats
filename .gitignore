@@ -30,7 +30,7 @@ test/version_tmp
 /lib/polygons/*.geojson
 /lib/assets/raster/*.json
 /lib/assets/raster/info/*.json
-/lib/assets/raster/input/*
+/lib/assets/raster/input/*.tif
 
 # YARD artifacts
 .yardoc
