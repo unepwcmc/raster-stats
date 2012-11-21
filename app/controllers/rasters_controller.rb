@@ -82,7 +82,7 @@ class RastersController < ApplicationController
   end
 
   def stats
-    render :json => JSON.pretty_generate(Starspan.new({:stat => params[:stat], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
+    render :json => JSON.pretty_generate(Starspan.new({:operation => params[:operation], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
     #render :json => JSON.pretty_generate(Starspan.new({:operation => params[:operation], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
   end
 end

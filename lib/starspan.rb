@@ -7,18 +7,18 @@ class Starspan
 
   def initialize(options)
     @raster = Raster.find(options[:raster_id])
-    @stat = options[:stat]
+    @operation = options[:operation]
     @identifier = Time.now.getutc.to_i
     @polygon = JSON.parse(options[:polygon])
     @polygon_file = polygon_to_file(options[:polygon])
     @raster_path, @res_used = choose_raster(@polygon["features"][0]["properties"]["AREA"])
   end
 
-  def choose_stat
-    if ["sum", "avg", "max", "min"].include?(@stat)
-      send("generate_#{@stat}")
+  def choose_operation
+    if ["sum", "avg", "max", "min"].include?(@operation)
+      send("generate_#{@operation}")
     else 
-      {:error => 'The statistic is not valid' }
+      {:error => 'The operation is not valid' }
     end
   end
 
@@ -44,7 +44,7 @@ class Starspan
   end
 
   def run_analysis
-    if choose_stat
+    if choose_operation
       results_to_hash
     else
       {:error => 'The application failed to run your analysis' }

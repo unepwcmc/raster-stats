@@ -2,7 +2,7 @@ RasterStats::Application.routes.draw do
   resources :operations
 
   resources :rasters
-  match '/rasters/:id/stats/:stat' => 'rasters#stats', :as => :stats
+  match '/rasters/:id/stats/:operation' => 'rasters#stats', :as => :stats
 
 #  resources :rasters do
 #    member do
