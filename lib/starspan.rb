@@ -66,13 +66,13 @@ class Starspan
   end
 
   def generate_max
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster_hash["file_name"]} --stats max --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
+    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster.file_name} --stats max --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
     puts call
     system(call)
   end
 
   def generate_min
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster_hash["file_name"]} --stats min --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
+    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster.file_name} --stats min --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
     puts call
     system(call)
   end
