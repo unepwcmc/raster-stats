@@ -12,8 +12,8 @@ class Raster < ActiveRecord::Base
       self.basename = File.basename((URI.parse(self.input_loc).path))
       get_file = "wget -O #{INPUT_PATH}#{self.basename} #{self.input_loc}"
     elsif !File.file?(self.input_loc)
-        self.errors.add(:input_loc, "file does not exist.")
-        return false
+      self.errors.add(:input_loc, "file does not exist.")
+      return false
     else
       self.basename = File.basename(self.input_loc)
       get_file = "cp #{self.input_loc} #{INPUT_PATH}"
