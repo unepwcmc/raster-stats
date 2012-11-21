@@ -67,6 +67,7 @@ end
 namespace :rasters do
   desc "Links the rasters folder"
   task :link_library_folder, :roles => :db do
+    run "rm -rf #{latest_release}/lib/assets/raster"
     run "ln -s #{shared_path}/raster #{latest_release}/lib/assets/raster"
   end
 
