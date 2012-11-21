@@ -66,13 +66,13 @@ end
 # Rasters
 namespace :rasters do
   desc "Links the rasters folder"
-  task :link_configuration_file, :roles => :db do
-    run "ln -s #{shared_path}/rasters #{latest_release}/rasters"
+  task :link_library_folder, :roles => :db do
+    run "ln -s #{shared_path}/raster #{latest_release}/lib/assets/raster"
   end
 
   desc "Make a shared rasters folder"
   task :make_shared_folder, :roles => :app do
-    run "mkdir -p #{shared_path}/rasters"
+    run "mkdir -p #{shared_path}/raster/input #{shared_path}/raster/low_resolution #{shared_path}/raster/medium_resolution #{shared_path}/raster/high_resolution"
   end
 end
 
