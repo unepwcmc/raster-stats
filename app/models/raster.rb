@@ -2,6 +2,7 @@ class Raster < ActiveRecord::Base
   require 'gdal-ruby/gdal'
 
   attr_accessible :name, :source_file
+  attr_reader :pixel_size
 
   def path(filename = 'default', img_extension = false)
     "#{rasters_path}#{filename}.tif#{img_extension && '.img'}"

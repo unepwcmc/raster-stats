@@ -1,4 +1,5 @@
 class Starspan
+  require 'csv'
   require 'json'
 
   attr_reader :identifier, :raster, :operation, :polygon
@@ -11,7 +12,27 @@ class Starspan
   end
 
   def result
-    send(@operation)
+    if respond_to?(@operation)
+      send(@operation)
+      return results_to_hash
+    else
+      {error: 'The application failed when trying to run the analysis...'}
+    end
+  end
+
+  def resolution_used
+    area = @polygon["features"][0]["properties"]["AREA"].to_f
+    pixels_processed = 2_300_000
+    high_pixel_area = @raster.pixel_size * @raster.pixel_size
+    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+
+    if area / high_pixel_area < pixels_processed
+      'high'
+    elsif area / medium_pixel_area < pixels_processed
+      'medium'
+    else
+      'low'
+    end
   end
 
   [:avg, :sum, :min, :max].each do |operation|
@@ -49,5 +70,33 @@ class Starspan
     end
 
     @vector_file
+  end
+
+  def results_to_hash
+    if File.exist?("#{self.class.results_path}#{@identifier}.csv")
+      list = []
+      csv = CSV.read("#{self.class.results_path}#{@identifier}.csv", {headers: true})
+      csv.each do |row|
+        entry = {}
+        csv.headers.each do |header|
+          if header.starts_with?('sum')
+            if resolution_used == 'medium'
+              entry[header] = row[header].to_f * @raster.pixel_size * (100/50)
+            elsif resolution_used == 'low'
+              entry[header] = row[header].to_f * @raster.pixel_size * (100/10)
+            else
+              entry[header] = row[header]
+            end
+          else
+            entry[header] = row[header]
+          end
+        end
+        list << entry
+      end
+
+      return list
+    else
+      {error: 'The application failed to process the analysis statistics...'}
+    end
   end
 end
