@@ -21,21 +21,20 @@ class Starspan
   end
 
   def resolution_used
-    return @resolution if defined?(@resolution)
+    :low
 
-    polygon = JSON.parse(@polygon)
-    area = polygon["features"][0]["properties"]["AREA"].to_f
-    pixels_processed = 2_300_000
-    high_pixel_area = @raster.pixel_size * @raster.pixel_size
-    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+    #FIXME: Calculate the area and then select the best resolution
+    #pixels_processed = 2_300_000
+    #high_pixel_area = @raster.pixel_size * @raster.pixel_size
+    #medium_pixel_area = high_pixel_area * (50/100) * (50/100)
 
-    if area / high_pixel_area < pixels_processed
-      @resolution = :high
-    elsif area / medium_pixel_area < pixels_processed
-      @resolution = :medium
-    else
-      @resolution = :low
-    end
+    #if area / high_pixel_area < pixels_processed
+    #  @resolution = :high
+    #elsif area / medium_pixel_area < pixels_processed
+    #  @resolution = :medium
+    #else
+    #  @resolution = :low
+    #end
   end
 
   [:avg, :sum, :min, :max].each do |operation|
