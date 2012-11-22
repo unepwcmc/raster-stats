@@ -9,7 +9,6 @@ class Starspan
     @raster = raster
     @operation = operation
     @polygon = polygon
-    create_operation
   end
 
   def result
@@ -22,27 +21,35 @@ class Starspan
   end
 
   def resolution_used
-    @resolution ||= lambda {
-      polygon = JSON.parse(@polygon)
-      area = polygon["features"][0]["properties"]["AREA"].to_f
-      pixels_processed = 2_300_000
-      high_pixel_area = @raster.pixel_size * @raster.pixel_size
-      medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+    return @resolution if defined?(@resolution)
 
-      if area / high_pixel_area < pixels_processed
-        :high
-      elsif area / medium_pixel_area < pixels_processed
-        :medium
-      else
-        :low
-      end
-    }.call
+    polygon = JSON.parse(@polygon)
+    area = polygon["features"][0]["properties"]["AREA"].to_f
+    pixels_processed = 2_300_000
+    high_pixel_area = @raster.pixel_size * @raster.pixel_size
+    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+
+    if area / high_pixel_area < pixels_processed
+      @resolution = :high
+    elsif area / medium_pixel_area < pixels_processed
+      @resolution = :medium
+    else
+      @resolution = :low
+    end
   end
 
   def create_operation
     raster = ([:min, :max].include?(@operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
-    define_method @operation do
+    self.class.define_method @operation do
       cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{@operation} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
+      system(cmd)
+    end
+  end
+
+  [:avg, :sum, :min, :max].each do |operation|
+    define_method operation do
+      raster = ([:min, :max].include?(operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
+      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{operation} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
       system(cmd)
     end
   end
