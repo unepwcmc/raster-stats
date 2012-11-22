@@ -21,7 +21,7 @@ class Starspan
   end
 
   def resolution_used
-    :low
+    [:min, :max].include?(@operation) ? :high : :low
 
     #FIXME: Calculate the area and then select the best resolution
     #pixels_processed = 2_300_000
