@@ -40,7 +40,7 @@ class Starspan
     stats = ([:avg, :sum].include?(operation.to_sym) ? "avg sum" : operation)
 
     define_method operation do
-      raster = ([:min, :max].include?(__method__) ? @raster.path(:high) : @raster.path(resolution_used.to_sym))
+      raster = ([:min, :max].include?(__method__) ? @raster.path(:high, true) : @raster.path(resolution_used.to_sym, true))
 
       cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{stats} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
       puts cmd
