@@ -72,15 +72,18 @@ class Starspan
   end
 
   def results_to_hash
-    if File.exist?("#{self.class.results_path}/#{@identifier}.csv")
-      list = []
-      csv = CSV.read("#{self.class.results_path}/#{@identifier}.csv", {headers: true})
+    csv_file = "#{self.class.results_path}/#{@identifier}.csv"
+
+    if File.exist?(csv_file)
+      csv = CSV.read(csv_file, {headers: true})
+
       csv.each do |row|
         entry = {}
+
         csv.headers.each do |header|
-          if header.starts_with?(@operation.capitalize)
+          if header.starts_with?(@operation)
             #FIXME calculations need to be checked
-            if resolution_used == :high || @operation != 'sum'
+            if resolution_used == :high || ['avg', 'sum'].include?(@operation)
               entry["value"] = row[header]
             else
               if resolution_used == :medium
@@ -91,10 +94,10 @@ class Starspan
             end
           end
         end
-        list << entry
-      end
 
-      return list
+        # return only for the first row
+        return entry
+      end
     else
       {error: 'The application failed to process the analysis statistics...'}
     end
