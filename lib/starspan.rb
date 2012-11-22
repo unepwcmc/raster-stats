@@ -21,27 +21,26 @@ class Starspan
   end
 
   def resolution_used
-    area = @polygon["features"][0]["properties"]["AREA"].to_f
-    pixels_processed = 2_300_000
-    high_pixel_area = @raster.pixel_size * @raster.pixel_size
-    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+    [:min, :max].include?(@operation) ? :high : :low
 
-    if area / high_pixel_area < pixels_processed
-      'high'
-    elsif area / medium_pixel_area < pixels_processed
-      'medium'
-    else
-      'low'
-    end
+    #FIXME: Calculate the area and then select the best resolution
+    #pixels_processed = 2_300_000
+    #high_pixel_area = @raster.pixel_size * @raster.pixel_size
+    #medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+
+    #if area / high_pixel_area < pixels_processed
+    #  @resolution = :high
+    #elsif area / medium_pixel_area < pixels_processed
+    #  @resolution = :medium
+    #else
+    #  @resolution = :low
+    #end
   end
 
   [:avg, :sum, :min, :max].each do |operation|
-    stats = ([:avg, :sum].include?(operation.to_sym) ? "avg sum" : operation)
-
     define_method operation do
-      raster = ([:min, :max].include?(__method__) ? @raster.path(:high) : @raster.path)
-
-      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{stats} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
+      raster = ([:min, :max].include?(operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
+      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{operation} --out-type table --out-prefix #{self.class.results_path}/ --summary-suffix #{@identifier}.csv"
       puts cmd
       system(cmd)
     end
@@ -72,28 +71,22 @@ class Starspan
   end
 
   def results_to_hash
-    if File.exist?("#{self.class.results_path}#{@identifier}.csv")
-      list = []
-      csv = CSV.read("#{self.class.results_path}#{@identifier}.csv", {headers: true})
-      csv.each do |row|
-        entry = {}
-        csv.headers.each do |header|
-          if header.starts_with?('sum')
-            if resolution_used == 'medium'
-              entry[header] = row[header].to_f * @raster.pixel_size * (100/50)
-            elsif resolution_used == 'low'
-              entry[header] = row[header].to_f * @raster.pixel_size * (100/10)
-            else
-              entry[header] = row[header]
-            end
-          else
-            entry[header] = row[header]
-          end
+    csv_file = "#{self.class.results_path}/#{@identifier}.csv"
+
+    if File.exist?(csv_file)
+      csv = CSV.read(csv_file, {headers: true})
+      result = csv[0]["#{@operation}_Band1"].to_f
+
+      #FIXME calculations need to be checked
+      unless ['avg', 'sum'].include?(@operation)
+        percentages = {medium: 50, low: 10}
+
+        if [:low, :medium].include?(resolution_used)
+          result *= @raster.pixel_size * (100/percentages[resolution_used])
         end
-        list << entry
       end
 
-      return list
+      return {value: result}
     else
       {error: 'The application failed to process the analysis statistics...'}
     end
