@@ -9,6 +9,7 @@ class Starspan
     @raster = raster
     @operation = operation
     @polygon = polygon
+    create_operation
   end
 
   def result
@@ -21,29 +22,27 @@ class Starspan
   end
 
   def resolution_used
-    polygon = JSON.parse(@polygon)
-    area = polygon["features"][0]["properties"]["AREA"].to_f
-    pixels_processed = 2_300_000
-    high_pixel_area = @raster.pixel_size * @raster.pixel_size
-    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+    @resolution ||= lambda {
+      polygon = JSON.parse(@polygon)
+      area = polygon["features"][0]["properties"]["AREA"].to_f
+      pixels_processed = 2_300_000
+      high_pixel_area = @raster.pixel_size * @raster.pixel_size
+      medium_pixel_area = high_pixel_area * (50/100) * (50/100)
 
-    if area / high_pixel_area < pixels_processed
-      'high'
-    elsif area / medium_pixel_area < pixels_processed
-      'medium'
-    else
-      'low'
-    end
+      if area / high_pixel_area < pixels_processed
+        :high
+      elsif area / medium_pixel_area < pixels_processed
+        :medium
+      else
+        :low
+      end
+    }.call
   end
 
-  [:avg, :sum, :min, :max].each do |operation|
-    stats = ([:avg, :sum].include?(operation.to_sym) ? "avg sum" : operation)
-
-    define_method operation do
-      raster = ([:min, :max].include?(__method__) ? @raster.path(:high, true) : @raster.path(resolution_used.to_sym, true))
-
-      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{stats} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
-      puts cmd
+  def create_operation
+    raster = ([:min, :max].include?(@operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
+    define_method @operation do
+      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{@operation} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
       system(cmd)
     end
   end
@@ -79,16 +78,17 @@ class Starspan
       csv.each do |row|
         entry = {}
         csv.headers.each do |header|
-          if header.starts_with?('sum')
-            if resolution_used == 'medium'
-              entry[header] = row[header].to_f * @raster.pixel_size * (100/50)
-            elsif resolution_used == 'low'
-              entry[header] = row[header].to_f * @raster.pixel_size * (100/10)
+          if header.starts_with?(@operation.capitalize)
+            #FIXME calculations need to be checked
+            if resolution_used == :high || @operation != 'sum'
+              entry["value"] = row[header]
             else
-              entry[header] = row[header]
+              if resolution_used == :medium
+                entry["value"] = row[header].to_f * @raster.pixel_size * (100/50)
+              elsif resolution_used == :low
+                entry["value"] = row[header].to_f * @raster.pixel_size * (100/10)
+              end
             end
-          else
-            entry[header] = row[header]
           end
         end
         list << entry
