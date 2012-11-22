@@ -76,28 +76,18 @@ class Starspan
 
     if File.exist?(csv_file)
       csv = CSV.read(csv_file, {headers: true})
+      result = csv[0]["#{@operation}_Band1"].to_f
 
-      csv.each do |row|
-        entry = {}
+      #FIXME calculations need to be checked
+      unless ['avg', 'sum'].include?(@operation)
+        percentages = {medium: 50, low: 10}
 
-        csv.headers.each do |header|
-          if header.starts_with?(@operation)
-            #FIXME calculations need to be checked
-            if resolution_used == :high || ['avg', 'sum'].include?(@operation)
-              entry["value"] = row[header]
-            else
-              if resolution_used == :medium
-                entry["value"] = row[header].to_f * @raster.pixel_size * (100/50)
-              elsif resolution_used == :low
-                entry["value"] = row[header].to_f * @raster.pixel_size * (100/10)
-              end
-            end
-          end
+        if [:low, :medium].include?(resolution_used)
+          result *= @raster.pixel_size * (100/percentages[resolution_used])
         end
-
-        # return only for the first row
-        return entry
       end
+
+      return {value: result}
     else
       {error: 'The application failed to process the analysis statistics...'}
     end
