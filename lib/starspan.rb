@@ -36,15 +36,14 @@ class Starspan
   end
 
   [:avg, :sum, :min, :max].each do |operation|
-    raster = Proc.new { @raster.path }
-    stats = operation
-
-    raster = Proc.new { @raster.path(:high) } if [:min, :max].include?(operation)
-
-    stats = "avg sum" if [:avg, :sum].include?(operation)
+    stats = ([:avg, :sum].include?(operation.to_sym) ? "avg sum" : operation)
 
     define_method operation do
-      system("#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{stats} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv")
+      raster = ([:min, :max].include?(__method__) ? @raster.path(:high) : @raster.path)
+
+      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{stats} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
+      puts cmd
+      system(cmd)
     end
   end
 
@@ -64,7 +63,7 @@ class Starspan
 
   def vector_file
     unless defined? @vector_file
-      @vector_file = Tempfile.new "raster_#{@raster.id}_operation_#{@operation.id}.geojson"
+      @vector_file = Tempfile.new "raster_#{@raster.id}_operation_#{@operation}.geojson"
       @vector_file.write(@polygon)
       @vector_file.rewind
     end

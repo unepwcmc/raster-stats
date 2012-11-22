@@ -1,31 +1,33 @@
-<h1>Listing rasters</h1>
+<div class="page-header">
+  <%= link_to new_raster_path, :class => 'btn btn-primary' do %>
+    <i class="icon-plus icon-white"></i>
+    New Raster
+  <% end %>
+  <h1>Listing rasters</h1>
+</div>
 
-<table>
-  <tr>
-    <th>Display name</th>
-    <th>File name</th>
-    <th>Basename</th>
-    <th>Pixel size</th>
-    <th>Input loc</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Display name</th>
+      <th>Source file</th>
+      <th>Pixel size</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
 
+  <tbody>
 <% @rasters.each do |raster| %>
-  <tr>
-    <td><%= raster.display_name %></td>
-    <td><%= raster.file_name %></td>
-    <td><%= raster.basename %></td>
-    <td><%= raster.pixel_size %></td>
-    <td><%= raster.input_loc %></td>
-    <td><%= link_to 'Show', raster %></td>
-    <td><%= link_to 'Edit', edit_raster_path(raster) %></td>
-    <td><%= link_to 'Destroy', raster, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
+    <tr>
+      <td><%= raster.display_name %></td>
+      <td><%= raster.source_file %></td>
+      <td><%= raster.pixel_size %></td>
+      <td><%= link_to 'Show', raster %></td>
+      <td><%= link_to 'Edit', edit_raster_path(raster) %></td>
+      <td><%= link_to 'Destroy', raster, confirm: 'Are you sure?', method: :delete %></td>
+    </tr>
 <% end %>
+  </tbody>
 </table>
-
-<br />
-
-<%= link_to 'New Raster', new_raster_path %>

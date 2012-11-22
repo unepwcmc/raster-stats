@@ -1,6 +1,13 @@
-<h1>Editing raster</h1>
+<div class="page-header">
+  <%= link_to rasters_path, :class => 'btn' do %>
+    <i class="icon-list-alt"></i>
+    Back
+  <% end %>
+  <%= link_to @raster, :class => 'btn btn-primary' do %>
+    <i class="icon-info-sign icon-white"></i>
+    Show
+  <% end %>
+  <h1>Editing raster</h1>
+</div>
 
 <%= render 'form' %>
-
-<%= link_to 'Show', @raster %> |
-<%= link_to 'Back', rasters_path %>

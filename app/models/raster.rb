@@ -1,11 +1,10 @@
 class Raster < ActiveRecord::Base
   require 'gdal-ruby/gdal'
 
-  attr_accessible :name, :source_file
-  attr_reader :pixel_size
+  attr_accessible :display_name, :source_file
 
   def path(filename = 'default', img_extension = false)
-    "#{rasters_path}#{filename}.tif#{img_extension && '.img'}"
+    "#{rasters_path}/#{filename}.tif#{(img_extension && '.img') || ''}"
   end
 
   class << self
@@ -25,16 +24,16 @@ class Raster < ActiveRecord::Base
   end
 
   def rasters_path
-    Rails.root.join('lib', 'rasters', self.id).tap do |dir|
-      Dir.mkdir dir unless File.directory? dir
+    Rails.root.join('lib', 'rasters', self.id.to_s).tap do |dir|
+      FileUtils.mkdir_p dir unless File.directory? dir
     end
   end
 
   def generate_rasters
-    system "#{gdalwarp_command} -dstnodata 0 #{path} #{path('ndata')}"
-    system "#{gdal_translate_command} -of HFA #{path('ndata')} #{path('high', true)}"
-    system "#{gdal_translate_command} -outsize 50% 50% -of HFA #{path('ndata')} #{path('medium', true)}"
-    system "#{gdal_translate_command} -outsize 10% 10% -of HFA #{path('ndata')} #{path('low', true)}"
+    system "#{self.class.gdalwarp_command} -dstnodata 0 #{path} #{path('ndata')}"
+    system "#{self.class.gdal_translate_command} -of HFA #{path('ndata')} #{path('high', true)}"
+    system "#{self.class.gdal_translate_command} -outsize 50% 50% -of HFA #{path('ndata')} #{path('medium', true)}"
+    system "#{self.class.gdal_translate_command} -outsize 10% 10% -of HFA #{path('ndata')} #{path('low', true)}"
   end
 
   after_create do
@@ -42,7 +41,7 @@ class Raster < ActiveRecord::Base
     if source_file =~ /^https?:\/\//
       system("wget -O #{path} #{source_file}")
     elsif File.file?(source_file)
-      system("cp #{source_file} #{path}"
+      system("cp #{source_file} #{path}")
     else
       raise(RuntimeError, "File not found...")
     end

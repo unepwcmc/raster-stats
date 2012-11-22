@@ -1,5 +1,9 @@
-<h1>New raster</h1>
+<div class="page-header">
+  <%= link_to rasters_path, :class => 'btn' do %>
+    <i class="icon-list-alt"></i>
+    Back
+  <% end %>
+  <h1>New raster</h1>
+</div>
 
 <%= render 'form' %>
-
-<%= link_to 'Back', rasters_path %>

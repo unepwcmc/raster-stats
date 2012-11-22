@@ -18,7 +18,7 @@ class RastersControllerTest < ActionController::TestCase
 
   test "should create raster" do
     assert_difference('Raster.count') do
-      post :create, raster: { display_name: @raster.display_name, file_name: @raster.file_name, high_res_path: @raster.high_res_path, input_loc: @raster.input_loc, input_url: @raster.input_url, low_res_path: @raster.low_res_path, low_res_value: @raster.low_res_value, medium_res_path: @raster.medium_res_path, medium_res_value: @raster.medium_res_value, pixel_size: @raster.pixel_size }
+      post :create, raster: { display_name: @raster.display_name, pixel_size: @raster.pixel_size, source_file: @raster.source_file }
     end
 
     assert_redirected_to raster_path(assigns(:raster))
@@ -35,7 +35,7 @@ class RastersControllerTest < ActionController::TestCase
   end
 
   test "should update raster" do
-    put :update, id: @raster, raster: { display_name: @raster.display_name, file_name: @raster.file_name, high_res_path: @raster.high_res_path, input_loc: @raster.input_loc, input_url: @raster.input_url, low_res_path: @raster.low_res_path, low_res_value: @raster.low_res_value, medium_res_path: @raster.medium_res_path, medium_res_value: @raster.medium_res_value, pixel_size: @raster.pixel_size }
+    put :update, id: @raster, raster: { display_name: @raster.display_name, pixel_size: @raster.pixel_size, source_file: @raster.source_file }
     assert_redirected_to raster_path(assigns(:raster))
   end
 
