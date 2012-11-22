@@ -20,8 +20,8 @@ set :scm_username, "unepwcmc-read"
 set :git_enable_submodules, 1
 default_run_options[:pty] = true                                                  # Must be set for the password prompt from git to work
 
-set :deploy_to, "~/#{application}"
-#set :use_sudo, false
+set :deploy_to, "/home/ubuntu/#{application}"
+set :use_sudo, false
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -55,6 +55,7 @@ namespace :sqlite3 do
       "database" => "#{shared_database_path}/production.sqlite3"
     }
     config_options = {"production" => db_options}.to_yaml
+    run "mkdir -p #{shared_path}/config"
     put config_options, "#{shared_path}/config/sqlite_config.yml"
   end
 
