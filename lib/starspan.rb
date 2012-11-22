@@ -21,7 +21,8 @@ class Starspan
   end
 
   def resolution_used
-    area = @polygon["features"][0]["properties"]["AREA"].to_f
+    polygon = JSON.parse(@polygon)
+    area = polygon["features"][0]["properties"]["AREA"].to_f
     pixels_processed = 2_300_000
     high_pixel_area = @raster.pixel_size * @raster.pixel_size
     medium_pixel_area = high_pixel_area * (50/100) * (50/100)
@@ -39,7 +40,7 @@ class Starspan
     stats = ([:avg, :sum].include?(operation.to_sym) ? "avg sum" : operation)
 
     define_method operation do
-      raster = ([:min, :max].include?(__method__) ? @raster.path(:high) : @raster.path)
+      raster = ([:min, :max].include?(__method__) ? @raster.path(:high) : @raster.path(resolution_used.to_sym))
 
       cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{stats} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
       puts cmd
