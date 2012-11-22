@@ -38,18 +38,11 @@ class Starspan
     end
   end
 
-  def create_operation
-    raster = ([:min, :max].include?(@operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
-    self.class.define_method @operation do
-      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{@operation} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
-      system(cmd)
-    end
-  end
-
   [:avg, :sum, :min, :max].each do |operation|
     define_method operation do
       raster = ([:min, :max].include?(operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
-      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{operation} --out-type table --out-prefix #{self.class.results_path} --summary-suffix #{@identifier}.csv"
+      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{operation} --out-type table --out-prefix #{self.class.results_path}/ --summary-suffix #{@identifier}.csv"
+      puts cmd
       system(cmd)
     end
   end
