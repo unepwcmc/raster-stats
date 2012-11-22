@@ -82,6 +82,7 @@ GEM
     net-ssh (2.6.1)
     net-ssh-gateway (1.1.0)
       net-ssh (>= 1.99.1)
+    nokogiri (1.5.5)
     polyglot (0.3.3)
     rack (1.4.1)
     rack-cache (1.2)
@@ -153,6 +154,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   gdal
   jquery-rails
+  nokogiri
   rails (= 3.2.7)
   ruby-debug19
   sass-rails (~> 3.2.3)
