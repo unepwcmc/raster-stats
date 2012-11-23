@@ -13,10 +13,8 @@ RAD_TO_DEG = 180/pi
 MAPNIK_MAP_FILE="osm-local.xml"
 MAPNIK_TILE_DIR="tiles/"
 
-
 # Default number of rendering threads to spawn, should be roughly equal to number of CPU cores available
 NUM_THREADS = 4
-
 
 def minmax (a,b,c):
     a = max(a,b)
@@ -220,5 +218,4 @@ if __name__ == "__main__":
     # World
     bbox = (-180.0,-90.0, 180.0,90.0)
 
-    render_tiles(bbox, mapfile, tile_dir, 0, 10, "World")
-
+    render_tiles(bbox, mapfile, tile_dir, 0, 5, "World")

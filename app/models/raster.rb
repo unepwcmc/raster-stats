@@ -7,7 +7,7 @@ class Raster < ActiveRecord::Base
 
   COLOR_MAX = '#000000'
   COLOR_MIN = '#FFFFFF'
-  TILES_SCRIPT = '/lib/generate_tiles.py'
+  TILES_SCRIPT = "#{Rails.root.join('lib')}/create_tiles.py"
 
   def path(filename = 'default', img_extension = false)
     "#{rasters_path}/#{filename}.tif#{(img_extension && '.img') || ''}"
