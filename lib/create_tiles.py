@@ -50,8 +50,6 @@ class GoogleProjection:
          h = RAD_TO_DEG * ( 2 * atan(exp(g)) - 0.5 * pi)
          return (f,h)
 
-
-
 class RenderThread:
     def __init__(self, tile_dir, mapfile, q, printLock, maxZoom):
         self.tile_dir = tile_dir
@@ -64,7 +62,6 @@ class RenderThread:
         self.prj = mapnik.Projection(self.m.srs)
         # Projects between tile pixel co-ordinates and LatLong (EPSG:4326)
         self.tileproj = GoogleProjection(maxZoom+1)
-
 
     def render_tile(self, tile_uri, x, y, z):
 
@@ -95,7 +92,6 @@ class RenderThread:
         mapnik.render(self.m, im)
         im.save(tile_uri, 'png256')
 
-
     def loop(self):
         while True:
             #Fetch a tile from the queue and render it
@@ -119,8 +115,6 @@ class RenderThread:
             print name, ":", z, x, y, exists, empty
             self.printLock.release()
             self.q.task_done()
-
-
 
 def render_tiles(bbox, mapfile, tile_dir, minZoom=1,maxZoom=18, name="unknown", num_threads=NUM_THREADS, tms_scheme=False):
     print "render_tiles(",bbox, mapfile, tile_dir, minZoom,maxZoom, name,")"
@@ -185,8 +179,6 @@ def render_tiles(bbox, mapfile, tile_dir, minZoom=1,maxZoom=18, name="unknown", 
     for i in range(num_threads):
         renderers[i].join()
 
-
-
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -194,8 +186,6 @@ if __name__ == "__main__":
 
     parser.add_option('-t', '--tiles', action='store', dest='tile_path', help='defines raster path',)
     (opts, args) = parser.parse_args()
-
-
 
     home = os.environ['HOME']
     try:
@@ -207,10 +197,10 @@ if __name__ == "__main__":
     except KeyError:
         tile_dir = opts.tile_path
 
-    #if not tile_dir.endswith('/'):
-    #    tile_dir = tile_dir + '/'
+    if not tile_dir.endswith('/'):
+        tile_dir = tile_dir + '/'
 
-    #-------------------------------------------------------------------------
+    #-------------------------------------------------------------------
     #
     # Change the following for different bounding boxes and zoom levels
     #

@@ -73,6 +73,7 @@ after "deploy:update_code", "sqlite3:link_configuration_file"
 # Rasters
 
 set(:shared_rasters_path) {"#{shared_path}/rasters"}
+set(:shared_tiles_path) {"#{shared_path}/tiles"}
 
 namespace :rasters do
   desc "Make a shared rasters folder"
@@ -80,12 +81,24 @@ namespace :rasters do
     run "mkdir -p #{shared_rasters_path}"
   end
 
+  desc "Make a shared tiles folder"
+  task :make_tiles_folder, :roles => :app do
+    run "mkdir -p #{shared_tiles_path}"
+  end
+
   desc "Links the rasters folder"
-  task :link_library_folder, :roles => :db do
+  task :link_rasters_folder, :roles => :db do
     run "ln -s #{shared_rasters_path} #{latest_release}/lib/rasters"
+  end
+
+  desc "Links the tiles folder"
+  task :link_tiles_folder, :roles => :db do
+    run "ln -s #{shared_tiles_path} #{latest_release}/public/tiles"
   end
 end
 
 after "deploy:setup", "rasters:make_shared_folder"
- 
-after "deploy:update_code", "rasters:link_library_folder"
+after "deploy:setup", "rasters:make_tiles_folder"
+
+after "deploy:update_code", "rasters:link_rasters_folder"
+after "deploy:update_code", "rasters:link_tiles_folder"
