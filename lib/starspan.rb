@@ -22,7 +22,7 @@ class Starspan
 
   def resolution_used
     return @resolution if defined? @resolution
-  
+
     pixels_processed = 2_300_000
     area = self.class.calculate_area_of_polygon(JSON.parse(@polygon))
 
@@ -66,7 +66,7 @@ class Starspan
         sum += (polygon_coordinates[i][0]*polygon_coordinates[i+1][1]) - (polygon_coordinates[i][1]*polygon_coordinates[i+1][0])
       end
 
-      sum / 2.0
+      (sum / 2.0).abs
     end
   end
 
