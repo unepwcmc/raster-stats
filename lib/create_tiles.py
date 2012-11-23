@@ -163,7 +163,7 @@ def render_tiles(bbox, mapfile, tile_dir, minZoom=1,maxZoom=18, name="unknown", 
                     str_y = "%s" % ((2**z-1) - y)
                 else:
                     str_y = "%s" % y
-                tile_uri = tile_dir + '/' + zoom + '/' + str_x + '/' + str_y + '.png'
+                tile_uri = tile_dir + zoom + '/' + str_x + '/' + str_y + '.png'
                 # Submit tile to be rendered into the queue
                 t = (name, tile_uri, x, y, z)
                 try:
@@ -197,8 +197,8 @@ if __name__ == "__main__":
     except KeyError:
         tile_dir = opts.tile_path
 
-    #if not tile_dir.endswith('/'):
-    #    tile_dir = tile_dir + '/'
+    if not tile_dir.endswith('/'):
+        tile_dir = tile_dir + '/'
 
     #-------------------------------------------------------------------
     #
