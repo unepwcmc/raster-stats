@@ -94,7 +94,7 @@ class Starspan
         percentages = {medium: 50, low: 10}
 
         if [:low, :medium].include?(resolution_used)
-          result *= @raster.pixel_size * (100/percentages[resolution_used])
+          result *= @raster.pixel_size * ((100/percentages[resolution_used])*(100/percentages[resolution_used]))
         end
       end
 
