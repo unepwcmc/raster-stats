@@ -83,7 +83,7 @@ namespace :rasters do
 
   desc "Make a shared tiles folder"
   task :make_tiles_folder, :roles => :app do
-    run "mkdir -p #{shared_rasters_path}"
+    run "mkdir -p #{shared_tiles_path}"
   end
 
   desc "Links the rasters folder"
@@ -93,12 +93,12 @@ namespace :rasters do
 
   desc "Links the tiles folder"
   task :link_tiles_folder, :roles => :db do
-    run "ln -s #{shared_rasters_path} #{latest_release}/public/tiles"
+    run "ln -s #{shared_tiles_path} #{latest_release}/public/tiles"
   end
 end
 
 after "deploy:setup", "rasters:make_shared_folder"
-after "deploy:setup", "rasters:make_public_tiles_folder"
+after "deploy:setup", "rasters:make_tiles_folder"
 
 after "deploy:update_code", "rasters:link_rasters_folder"
 after "deploy:update_code", "rasters:link_tiles_folder"
