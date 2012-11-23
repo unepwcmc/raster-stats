@@ -7,7 +7,6 @@ class Raster < ActiveRecord::Base
 
   COLOR_MAX = '#000000'
   COLOR_MIN = '#FFFFFF'
-  TILES_SCRIPT = "#{Rails.root.join('lib')}/create_tiles.py"
 
   def path(filename = 'default', img_extension = false)
     "#{rasters_path}/#{filename}.tif#{(img_extension && '.img') || ''}"
@@ -44,7 +43,7 @@ class Raster < ActiveRecord::Base
   end
 
   def raster_tiles_path
-    Rails.root.join('lib', 'rasters', self.id.to_s, 'tiles').tap do |dir|
+    Rails.root.join('public', 'tiles', self.id.to_s).tap do |dir|
       FileUtils.mkdir_p dir unless File.directory? dir
     end
   end
@@ -107,11 +106,11 @@ class Raster < ActiveRecord::Base
   #TODO: add background jobs
   def create_tiles
     generate_xml unless File.exists?("#{rasters_path}/style.xml")
-    system "#{self.class.python_command} #{TILES_SCRIPT} -x #{rasters_path}/style.xml -t #{raster_tiles_path}"
+    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py -x #{rasters_path}/style.xml -t #{raster_tiles_path}"
   end
 
+  # TODO: add background jobs
   after_create do
-    # TODO: add background jobs
     if source_file =~ /^https?:\/\//
       system("wget -O #{path} #{source_file}")
     elsif File.file?(source_file)
