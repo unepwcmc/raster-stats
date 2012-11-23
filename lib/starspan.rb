@@ -21,20 +21,21 @@ class Starspan
   end
 
   def resolution_used
-    [:min, :max].include?(@operation) ? :high : :low
+    return @resolution if defined? @resolution
+  
+    pixels_processed = 2_300_000
+    area = self.class.calculate_area_of_polygon(JSON.parse(@polygon))
 
-    #FIXME: Calculate the area and then select the best resolution
-    #pixels_processed = 2_300_000
-    #high_pixel_area = @raster.pixel_size * @raster.pixel_size
-    #medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+    high_pixel_area = @raster.pixel_size * @raster.pixel_size
+    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
 
-    #if area / high_pixel_area < pixels_processed
-    #  @resolution = :high
-    #elsif area / medium_pixel_area < pixels_processed
-    #  @resolution = :medium
-    #else
-    #  @resolution = :low
-    #end
+    if area / high_pixel_area < pixels_processed
+      @resolution = :high
+    elsif area / medium_pixel_area < pixels_processed
+      @resolution = :medium
+    else
+      @resolution = :low
+    end
   end
 
   [:avg, :sum, :min, :max].each do |operation|
@@ -55,6 +56,17 @@ class Starspan
 
     def starspan_command
       `which starspan`.delete("\n")
+    end
+    
+    def calculate_area_of_polygon(polygon)
+      polygon_coordinates = polygon["features"][0]["geometry"]["coordinates"][0]
+      sum = 0
+
+      (0...(polygon_coordinates.size - 1)).each do |i|
+        sum += (polygon_coordinates[i][0]*polygon_coordinates[i+1][1]) - (polygon_coordinates[i][1]*polygon_coordinates[i+1][0])
+      end
+
+      sum / 2.0
     end
   end
 
