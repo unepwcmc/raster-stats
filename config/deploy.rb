@@ -15,7 +15,7 @@ set :repository,  "https://github.com/unepwcmc/raster-stats.git"
 set :scm, :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-set :branch, "refactor"
+set :branch, "master"
 set :scm_username, "unepwcmc-read"
 set :git_enable_submodules, 1
 default_run_options[:pty] = true                                                  # Must be set for the password prompt from git to work
