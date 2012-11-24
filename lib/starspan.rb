@@ -2,108 +2,105 @@ class Starspan
   require 'csv'
   require 'json'
 
-  STARSPAN = 'starspan'
-  PIXELS_PROCESSED = 2_300_000
+  attr_reader :identifier, :raster, :operation, :polygon
 
-  def initialize(options)
-    @raster = Raster.find(options[:raster_id])
-    @operation = options[:operation]
+  def initialize(raster, operation, polygon)
     @identifier = Time.now.getutc.to_i
-    @polygon = JSON.parse(options[:polygon])
-    @polygon_file = polygon_to_file(options[:polygon])
-    @raster_path, @res_used = choose_raster(@polygon["features"][0]["properties"]["AREA"])
+    @raster = raster
+    @operation = operation
+    @polygon = polygon
   end
 
-  def choose_operation
-    if ["sum", "avg", "max", "min"].include?(@operation)
-      send("generate_#{@operation}")
-    else 
-      {:error => 'The operation is not valid' }
+  def result
+    if respond_to?(@operation)
+      send(@operation)
+      return results_to_hash
+    else
+      {error: 'The application failed when trying to run the analysis...'}
     end
   end
 
-  def polygon_to_file polygon
-    polygon_file = "#{POLYGON_PATH}#{@identifier}.geojson"
-    File.open(polygon_file, 'w'){|f| f.write(polygon)}
-    polygon_file
-  end
+  def resolution_used
+    return @resolution if defined? @resolution
 
-  def choose_raster(area)
-    high_res_path = HIGH_RES_PATH + @raster.file_name
-    medium_res_path = MEDIUM_RES_PATH + @raster.file_name
-    low_res_path = LOW_RES_PATH + @raster.file_name
-    high_pixel_area = @raster.pixel_size*@raster.pixel_size
-    medium_pixel_area = high_pixel_area*MEDIUM_RES_VALUE/100*MEDIUM_RES_VALUE/100
-    if area/high_pixel_area < PIXELS_PROCESSED
-      [high_res_path, "high"]
-    elsif area.to_f/medium_pixel_area < PIXELS_PROCESSED
-      [medium_res_path, "medium"]
+    pixels_processed = 2_300_000
+    area = self.class.calculate_area_of_polygon(JSON.parse(@polygon))
+
+    high_pixel_area = @raster.pixel_size * @raster.pixel_size
+    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
+
+    if area / high_pixel_area < pixels_processed
+      @resolution = :high
+    elsif area / medium_pixel_area < pixels_processed
+      @resolution = :medium
     else
-      [low_res_path, "low"]
+      @resolution = :low
     end
   end
 
-  def run_analysis
-    if choose_operation
-      results_to_hash
-    else
-      {:error => 'The application failed to run your analysis' }
+  [:avg, :sum, :min, :max].each do |operation|
+    define_method operation do
+      raster = ([:min, :max].include?(operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
+      cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{operation} --out-type table --out-prefix #{self.class.results_path}/ --summary-suffix #{@identifier}.csv"
+      puts cmd
+      system(cmd)
+    end
+  end
+
+  class << self
+    def results_path
+      Rails.root.join('tmp', 'starspan').tap do |dir|
+        Dir.mkdir dir unless File.directory? dir
+      end
+    end
+
+    def starspan_command
+      `which starspan`.delete("\n")
+    end
+    
+    def calculate_area_of_polygon(polygon)
+      polygon_coordinates = polygon["features"][0]["geometry"]["coordinates"][0]
+      sum = 0
+
+      (0...(polygon_coordinates.size - 1)).each do |i|
+        sum += (polygon_coordinates[i][0]*polygon_coordinates[i+1][1]) - (polygon_coordinates[i][1]*polygon_coordinates[i+1][0])
+      end
+
+      (sum / 2.0).abs
     end
   end
 
   private
 
-  def generate_avg
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{@raster_path} --stats avg sum --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
-    puts call
-    system(call)
-  end
+  def vector_file
+    unless defined? @vector_file
+      @vector_file = Tempfile.new "raster_#{@raster.id}_operation_#{@operation}.geojson"
+      @vector_file.write(@polygon)
+      @vector_file.rewind
+    end
 
-  def generate_sum
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{@raster_path} --stats avg sum --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
-    puts call
-    system(call)
-  end
-
-  def generate_max
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster.file_name} --stats max --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
-    puts call
-    system(call)
-  end
-
-  def generate_min
-    call = "#{STARSPAN} --vector #{@polygon_file} --raster #{HIGH_RES_PATH + @raster.file_name} --stats min --out-type table --out-prefix #{RESULTS_PATH} --summary-suffix #{@identifier}.csv"
-    puts call
-    system(call)
+    @vector_file
   end
 
   def results_to_hash
-    if File.file?("#{RESULTS_PATH}#{@identifier}.csv")
-      puts "File generated successfuly"
-      csv_table = CSV.read("#{RESULTS_PATH}#{@identifier}.csv", {:headers => true})
-      list = []
-      csv_table.each do |row|
-        entry = {}
-        csv_table.headers.each do |header|
-          if header.start_with?("sum")
-            if @res_used == 'medium'
-              entry[header] = row[header].to_f * @raster.pixel_size*(100/(MEDIUM_RES_VALUE))
-            elsif @res_used == 'low'
-              entry[header] = row[header].to_f * @raster.pixel_size*(100/(LOW_RES_VALUE))
-            else
-              entry[header] = row[header]
-            end
-          else
-            entry[header] = row[header]
-          end
+    csv_file = "#{self.class.results_path}/#{@identifier}.csv"
+
+    if File.exist?(csv_file)
+      csv = CSV.read(csv_file, {headers: true})
+      result = csv[0]["#{@operation}_Band1"].to_f
+
+      #FIXME calculations need to be checked
+      unless ['avg', 'sum'].include?(@operation)
+        percentages = {medium: 50, low: 10}
+
+        if [:low, :medium].include?(resolution_used)
+          result *= @raster.pixel_size * ((100/percentages[resolution_used])*(100/percentages[resolution_used]))
         end
-      list << entry
       end
-      #result = JSON.pretty_generate(list)
-      puts list
-      list
+
+      return {value: result}
     else
-      {:error => 'The application failed to process the analysis stats.'}
+      {error: 'The application failed to process the analysis statistics...'}
     end
   end
 end

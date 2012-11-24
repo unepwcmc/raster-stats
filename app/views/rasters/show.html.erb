@@ -1,30 +1,43 @@
-<p id="notice"><%= notice %></p>
+<div class="page-header">
+  <%= link_to rasters_path, :class => 'btn' do %>
+    <i class="icon-list-alt"></i>
+    Back
+  <% end %>
+  <%= link_to edit_raster_path(@raster), :class => 'btn btn-primary' do %>
+    <i class="icon-pencil icon-white"></i>
+    Edit
+  <% end %>
+  <h1>Listing rasters</h1>
+</div>
 
-<p>
-  <b>Display name:</b>
-  <%= @raster.display_name %>
-</p>
+<dl>
+  <dt>Display name:</dt>
+  <dd><%= @raster.display_name %></dd>
 
-<p>
-  <b>File name:</b>
-  <%= @raster.file_name %>
-</p>
+  <dt>Source file:</dt>
+  <dd><%= @raster.source_file %></dd>
 
-<p>
-  <b>Basename:</b>
-  <%= @raster.basename %>
-</p>
+  <dt>Pixel size:</dt>
+  <dd><%= @raster.pixel_size %></dd>
 
-<p>
-  <b>Pixel size:</b>
-  <%= @raster.pixel_size %>
-</p>
+</dl>
 
-<p>
-  <b>Input loc:</b>
-  <%= @raster.input_loc %>
-</p>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Display name</th>
+      <th>Name</th>
+      <th></th>
+    </tr>
+  </thead>
 
-<%= link_to 'Edit', edit_raster_path(@raster) %> |
-<%= link_to 'Back', rasters_path %>
-<%= link_to 'Stats test', stats_path(id: @raster, stat: 'avg', polygon: '{"type": "FeatureCollection","features": [{ "type": "Feature", "id": 0, "properties": { "id": null, "name": 8, "AREA": 7435.85032686457 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -55.199133830905097, 14.166474645080788 ], [ -139.868730478081005, 21.093987098031544 ], [ -166.295907613411686, 80.619279286349169 ], [ -19.022124354384474, 82.671875568704948 ], [ -55.199133830905097, 14.166474645080788 ] ] ] } }]}') %>
+  <tbody>
+<% Operation.all.each do |operation| %>
+    <tr>
+      <td><%= operation.display_name %></td>
+      <td><%= operation.name %></td>
+      <td><%= link_to 'Calculate', raster_operation_path(@raster, operation, polygon: '{"type": "FeatureCollection","features": [{ "type": "Feature", "id": 0, "properties": { "id": null, "name": 8, "AREA": 7435.85032686457 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -55.199133830905097, 14.166474645080788 ], [ -139.868730478081005, 21.093987098031544 ], [ -166.295907613411686, 80.619279286349169 ], [ -19.022124354384474, 82.671875568704948 ], [ -55.199133830905097, 14.166474645080788 ] ] ] } }]}') %></td>
+    </tr>
+<% end %>
+  </tbody>
+</table>

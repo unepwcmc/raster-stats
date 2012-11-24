@@ -1,3 +1,8 @@
+if RUBY_VERSION =~ /1.9/
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+end
+
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.7'
@@ -6,9 +11,10 @@ gem 'rails', '3.2.7'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3'
-
 gem 'gdal'
-
+gem 'bootstrap-generators', '~> 2.1', git: 'git://github.com/decioferreira/bootstrap-generators.git'
+gem 'simple_form'
+gem 'nokogiri'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -36,7 +42,6 @@ gem 'jquery-rails'
 # Deploy with Capistrano
 gem 'capistrano'
 gem 'capistrano-ext'
-#gem 'brightbox', '>2.3.8'
 
 group :test, :development do
  gem 'ruby-debug19'

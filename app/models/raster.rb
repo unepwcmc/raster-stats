@@ -1,42 +1,127 @@
 class Raster < ActiveRecord::Base
-  attr_accessible :display_name, :basename, :file_name, :input_loc, :pixel_size
+  require 'gdal-ruby/gdal'
+  require 'builder'
+  require 'nokogiri'
 
-  after_create :generate_rasters
+  attr_accessible :display_name, :source_file
 
-  FILE_TYPE = 'HFA'
-  OUTPUT_EXTENSION = '.img'
-  GDALTRANSLATE = 'gdal_translate'
+  COLOR_MAX = '#000000'
+  COLOR_MIN = '#FFFFFF'
 
-  def calculate_extra_attributes_and_save
-    if input_loc.starts_with?('http')
-      self.basename = File.basename((URI.parse(self.input_loc).path))
-      get_file = "wget -O #{INPUT_PATH}#{self.basename} #{self.input_loc}"
-    elsif !File.file?(self.input_loc)
-      self.errors.add(:input_loc, "file does not exist.")
-      return false
-    else
-      self.basename = File.basename(self.input_loc)
-      get_file = "cp #{self.input_loc} #{INPUT_PATH}"
-    end
-    system(get_file)
-    self.pixel_size = Raster.pixel_size(INPUT_PATH+self.basename)
-    self.file_name = self.basename + OUTPUT_EXTENSION
-    self.save
+  def path(filename = 'default', img_extension = false)
+    "#{rasters_path}/#{filename}.tif#{(img_extension && '.img') || ''}"
   end
 
-  def self.pixel_size file_path
-    file = Gdal::Gdal.open(file_path)
-    file.get_geo_transform()[1]
+  class << self
+    def gdal_translate_command
+      `which gdal_translate`.delete("\n")
+    end
+
+    def gdalwarp_command
+      `which gdalwarp`.delete("\n")
+    end
+
+    def python_command
+      `which python`.delete("\n")
+    end
+  end
+
+  private
+
+  def extract_pixel_size
+    Gdal::Gdal.open(path).get_geo_transform()[1]
+  end
+
+  def extract_min_max_pixel
+    Gdal::Gdal.open(path).get_raster_band(1).compute_raster_min_max()
+  end
+
+  def rasters_path
+    Rails.root.join('lib', 'rasters', self.id.to_s).tap do |dir|
+      FileUtils.mkdir_p dir unless File.directory? dir
+    end
+  end
+
+  def raster_tiles_path
+    Rails.root.join('public', 'tiles', self.id.to_s).tap do |dir|
+      FileUtils.mkdir_p dir unless File.directory? dir
+    end
   end
 
   def generate_rasters
-    no_data = "gdalwarp #{INPUT_PATH}#{basename} #{INPUT_PATH}ndata_#{basename} -dstnodata 0"
-    generate_high = "#{GDALTRANSLATE} -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{basename}  #{HIGH_RES_PATH}#{basename}#{OUTPUT_EXTENSION}"
-    generate_medium = "#{GDALTRANSLATE} -outsize #{MEDIUM_RES_VALUE}% #{MEDIUM_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{basename}  #{MEDIUM_RES_PATH}#{basename}#{OUTPUT_EXTENSION}"
-    generate_low = "#{GDALTRANSLATE} -outsize #{LOW_RES_VALUE}% #{LOW_RES_VALUE}% -of #{FILE_TYPE} #{INPUT_PATH}ndata_#{basename} #{LOW_RES_PATH}#{basename}#{OUTPUT_EXTENSION}"
-    system(no_data)
-    system(generate_high)
-    system(generate_medium)
-    system(generate_low)
+    system "#{self.class.gdalwarp_command} -dstnodata 0 #{path} #{path('ndata')}"
+    system "#{self.class.gdal_translate_command} -of HFA #{path('ndata')} #{path('high', true)}"
+    system "#{self.class.gdal_translate_command} -outsize 50% 50% -of HFA #{path('ndata')} #{path('medium', true)}"
+    system "#{self.class.gdal_translate_command} -outsize 10% 10% -of HFA #{path('ndata')} #{path('low', true)}"
+  end
+
+  def generate_xml
+    builder = Nokogiri::XML::Builder.new do |xml|
+      map = xml.Map {
+        style = xml.Style {
+          xml.Rule {
+            raster_symbolizer = xml.RasterSymbolizer {
+              raster_colorizer = xml.RasterColorizer {
+                stop = xml.stop
+                stop['color'] = COLOR_MIN
+                stop['value'] = extract_min_max_pixel[0].to_s
+
+                stop = xml.stop
+                stop['color'] = COLOR_MAX
+                stop['value'] = extract_min_max_pixel[1].to_s
+              }
+
+              raster_colorizer['default-mode'] = 'linear'
+              raster_colorizer['epsilon'] = '0.001'
+            }
+
+            raster_symbolizer['opacity'] = '1'
+          }
+        }
+        style['name'] = 'raster'
+
+        layer = xml.Layer {
+          xml.StyleName 'raster'
+          xml.Datasource {
+            parameter = xml.Parameter path('ndata')
+            parameter['name'] = 'file'
+            parameter = xml.Parameter 'gdal'
+            parameter['name'] = 'type'
+            parameter = xml.Parameter '1'
+            parameter['name'] = 'band'
+          }
+        }
+        layer['name'] = 'raster'
+      }
+
+      map['background-color'] = 'steelblue'
+      map['srs'] = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'
+    end
+
+    File.open("#{rasters_path}/style.xml", 'w') do |f|
+      f.puts builder.to_xml
+    end
+  end
+
+  #TODO: add background jobs
+  def create_tiles
+    generate_xml unless File.exists?("#{rasters_path}/style.xml")
+    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py -x #{rasters_path}/style.xml -t #{raster_tiles_path}"
+  end
+
+  # TODO: add background jobs
+  after_create do
+    if source_file =~ /^https?:\/\//
+      system("wget -O #{path} #{source_file}")
+    elsif File.file?(source_file)
+      system("cp #{source_file} #{path}")
+    else
+      raise(RuntimeError, "File not found...")
+    end
+
+    self.update_attribute(:pixel_size, extract_pixel_size)
+
+    generate_rasters
+    create_tiles
   end
 end

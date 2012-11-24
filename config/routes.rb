@@ -1,14 +1,9 @@
 RasterStats::Application.routes.draw do
-  resources :operations
+  resources :operations, only: :index
 
-  resources :rasters
-  match '/rasters/:id/stats/:operation' => 'rasters#stats', :as => :stats
-
-#  resources :rasters do
-#    member do
-#      get :stats
-#    end
-#  end
+  resources :rasters do
+    resources :operations, only: :show
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

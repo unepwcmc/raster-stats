@@ -2,24 +2,10 @@
 
 one:
   display_name: MyString
-  file_name: MyString
-  pixel_size: MyString
-  high_res_path: MyString
-  medium_res_path: MyString
-  low_res_path: MyString
-  medium_res_value: MyString
-  low_res_value: MyString
-  input_loc: MyString
-  input_url: MyString
+  source_file: MyString
+  pixel_size: 1.5
 
 two:
   display_name: MyString
-  file_name: MyString
-  pixel_size: MyString
-  high_res_path: MyString
-  medium_res_path: MyString
-  low_res_path: MyString
-  medium_res_value: MyString
-  low_res_value: MyString
-  input_loc: MyString
-  input_url: MyString
+  source_file: MyString
+  pixel_size: 1.5

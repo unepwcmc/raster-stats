@@ -3,6 +3,26 @@ raster-stats <a href="https://codeclimate.com/github/unepwcmc/raster-stats"><img
 
 Sinatra app to calculate intersection stats between polygons and rasters.
 
+Dependencies
+============
+
+Install Mapnik: (https://github.com/mapnik)
+
+Install from packages
+
+First, ensure add-apt-repository is installed:
+
+sudo apt-get install -y python-software-properties
+
+Mapnik v2.1.0
+
+This is the latest in the 2.1.x series.
+
+sudo add-apt-repository ppa:mapnik/v2.1.0
+sudo apt-get update
+sudo apt-get install libmapnik mapnik-utils python-mapnik
+
+These packages come from: https://launchpad.net/~mapnik/+archive/v2.1.0/+packages
 
 Start it
 ============
@@ -11,7 +31,6 @@ Start it
 shotgun config.ru</code></pre>
 The application will be running in port 9393:
 <code>http://localhost:9393/stats/{polygon in GeoJSON}</code>
-
 
 Set up
 ============

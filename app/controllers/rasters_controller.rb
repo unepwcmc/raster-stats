@@ -43,7 +43,7 @@ class RastersController < ApplicationController
     @raster = Raster.new(params[:raster])
 
     respond_to do |format|
-      if @raster.calculate_extra_attributes_and_save
+      if @raster.save
         format.html { redirect_to @raster, notice: 'Raster was successfully created.' }
         format.json { render json: @raster, status: :created, location: @raster }
       else
@@ -79,10 +79,5 @@ class RastersController < ApplicationController
       format.html { redirect_to rasters_url }
       format.json { head :no_content }
     end
-  end
-
-  def stats
-    render :json => JSON.pretty_generate(Starspan.new({:operation => params[:operation], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
-    #render :json => JSON.pretty_generate(Starspan.new({:operation => params[:operation], :raster_id => params[:id], :polygon=>params[:polygon]}).run_analysis)
   end
 end
