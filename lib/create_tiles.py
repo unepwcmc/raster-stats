@@ -16,7 +16,7 @@ NUM_THREADS = 4
 
 # Default number of zoom levels to render
 MIN_ZOOM_LEVEL = 0
-MAX_ZOOM_LEVEL = 1
+MAX_ZOOM_LEVEL = 5
 
 # Change the following for different bounding boxes and zoom levels (default: World)
 BBOX = (-180.0,-90.0, 180.0,90.0)
