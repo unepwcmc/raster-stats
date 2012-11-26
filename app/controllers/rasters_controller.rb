@@ -8,7 +8,7 @@ class RastersController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @rasters }
+      format.json # index.json.rabl
     end
   end
 
@@ -19,7 +19,7 @@ class RastersController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @raster }
+      format.json # show.json.rabl
     end
   end
 
