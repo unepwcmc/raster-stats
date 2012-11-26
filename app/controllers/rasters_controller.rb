@@ -1,4 +1,6 @@
 class RastersController < ApplicationController
+  before_filter :authenticate_user!, except: [:index, :show]
+
   # GET /rasters
   # GET /rasters.json
   def index

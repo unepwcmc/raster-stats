@@ -31,6 +31,13 @@
             <li><%= link_to "Rasters", rasters_path %></li>
             <li><%= link_to "Operations", operations_path %></li>
           </ul>
+          <ul class="nav pull-right">
+            <% if user_signed_in? %>
+              <li><%= link_to truncate("Logout #{current_user.email}"), destroy_user_session_path, method: :delete %></li>
+            <% else %>
+              <li><%= link_to 'Login', new_user_session_path %></li>
+            <% end %>
+          </ul>
         </div>
       </div>
     </div>
