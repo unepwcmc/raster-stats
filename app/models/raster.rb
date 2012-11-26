@@ -26,6 +26,12 @@ class Raster < ActiveRecord::Base
     end
   end
 
+  #TODO: add background jobs
+  def create_tile(z, x, y)
+    generate_xml unless File.exists?("#{rasters_path}/style.xml")
+    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} -z #{z} -x #{x} -y #{y}"
+  end
+
   private
 
   def extract_pixel_size
@@ -106,7 +112,7 @@ class Raster < ActiveRecord::Base
   #TODO: add background jobs
   def create_tiles
     generate_xml unless File.exists?("#{rasters_path}/style.xml")
-    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py -x #{rasters_path}/style.xml -t #{raster_tiles_path}"
+    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path}"
   end
 
   # TODO: add background jobs

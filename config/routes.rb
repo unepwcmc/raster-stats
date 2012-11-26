@@ -1,4 +1,6 @@
 RasterStats::Application.routes.draw do
+  get "tiles/show"
+
   resources :operations, only: :index
 
   resources :rasters do
@@ -6,6 +8,8 @@ RasterStats::Application.routes.draw do
   end
 
   devise_for :users
+
+  match 'tiles/:raster_id/:z/:x/:y.png' => 'tiles#show'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
