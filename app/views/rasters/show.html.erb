@@ -20,6 +20,9 @@
   <dt>Pixel size:</dt>
   <dd><%= @raster.pixel_size %></dd>
 
+  <dt>Tiles URL:</dt>
+  <dd><%= tile_url(raster_id: @raster, z: 'z', x: 'x', y: 'y') %></dd>
+
 </dl>
 
 <table class="table table-bordered table-striped">
