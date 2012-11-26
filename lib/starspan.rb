@@ -26,15 +26,9 @@ class Starspan
     pixels_processed = 2_300_000
     area = self.class.calculate_area_of_polygon(JSON.parse(@polygon))
 
-    high_pixel_area = @raster.pixel_size * @raster.pixel_size
-    medium_pixel_area = high_pixel_area * (50/100) * (50/100)
-
-    if area / high_pixel_area < pixels_processed
-      @resolution = :high
-    elsif area / medium_pixel_area < pixels_processed
-      @resolution = :medium
-    else
-      @resolution = :low
+    Raster::RESOLUTIONS.each do |resolution, percentage|
+      pixel_area = @raster.pixel_size**2 * (percentage / 100)**2
+      return (@resolution = resolution) if((area / pixel_area) < pixels_processed)
     end
   end
 
@@ -89,16 +83,11 @@ class Starspan
       csv = CSV.read(csv_file, {headers: true})
       result = csv[0]["#{@operation}_Band1"].to_f
 
-      #FIXME calculations need to be checked
-      unless ['avg', 'sum'].include?(@operation)
-        percentages = {medium: 50, low: 10}
-
-        if [:low, :medium].include?(resolution_used)
-          result *= @raster.pixel_size * ((100/percentages[resolution_used])*(100/percentages[resolution_used]))
-        end
+      if @operation == 'sum'
+        result *= (100 / Raster::RESOLUTIONS[resolution_used])**2
       end
 
-      return {value: result}
+      {value: result}
     else
       {error: 'The application failed to process the analysis statistics...'}
     end

@@ -3,6 +3,9 @@ class Raster < ActiveRecord::Base
   require 'builder'
   require 'nokogiri'
 
+  # Resolutions (and percentages) of the rasters generated
+  RESOLUTIONS = {high: 100, medium: 50, low: 10}
+
   attr_accessible :display_name, :source_file
 
   validates :display_name, uniqueness: true
@@ -59,8 +62,8 @@ class Raster < ActiveRecord::Base
   def generate_rasters
     system "#{self.class.gdalwarp_command} -dstnodata 0 #{path} #{path('ndata')}"
     system "#{self.class.gdal_translate_command} -of HFA #{path('ndata')} #{path('high', true)}"
-    system "#{self.class.gdal_translate_command} -outsize 50% 50% -of HFA #{path('ndata')} #{path('medium', true)}"
-    system "#{self.class.gdal_translate_command} -outsize 10% 10% -of HFA #{path('ndata')} #{path('low', true)}"
+    system "#{self.class.gdal_translate_command} -outsize #{RESOLUTIONS[:medium]}% #{RESOLUTIONS[:medium]}% -of HFA #{path('ndata')} #{path('medium', true)}"
+    system "#{self.class.gdal_translate_command} -outsize #{RESOLUTIONS[:low]}% #{RESOLUTIONS[:low]}% -of HFA #{path('ndata')} #{path('low', true)}"
   end
 
   def generate_xml
