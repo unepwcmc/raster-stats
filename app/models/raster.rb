@@ -5,6 +5,8 @@ class Raster < ActiveRecord::Base
 
   attr_accessible :display_name, :source_file
 
+  validates :display_name, uniqueness: true
+
   COLOR_MAX = '#000000'
   COLOR_MIN = '#FFFFFF'
 
