@@ -44,6 +44,6 @@ class RastersController < ApplicationController
     @raster = Raster.find(params[:id])
     @raster.destroy
     flash[:notice] = 'Raster was successfully destroyed.'
-    respond_with(@product)
+    respond_with(@raster)
   end
 end

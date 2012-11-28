@@ -30,6 +30,8 @@ class Starspan
       pixel_area = @raster.pixel_size**2 * (percentage / 100)**2
       return (@resolution = resolution) if((area / pixel_area) < pixels_processed)
     end
+
+    return :low
   end
 
   [:avg, :sum, :min, :max].each do |operation|
