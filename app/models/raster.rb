@@ -6,12 +6,10 @@ class Raster < ActiveRecord::Base
   # Resolutions (and percentages) of the rasters generated
   RESOLUTIONS = {high: 100, medium: 50, low: 10}
 
-  attr_accessible :display_name, :source_file
+  attr_accessible :display_name, :source_file, :color_min, :color_max, :zoom_min, :zoom_max
 
   validates :display_name, uniqueness: true
 
-  COLOR_MAX = '#000000'
-  COLOR_MIN = '#FFFFFF'
 
   def path(filename = 'default', img_extension = false)
     "#{rasters_path}/#{filename}.tif#{(img_extension && '.img') || ''}"
@@ -33,8 +31,8 @@ class Raster < ActiveRecord::Base
 
   #TODO: add background jobs
   def create_tile(z, x, y)
-    generate_xml unless File.exists?("#{rasters_path}/style.xml")
-    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} -z #{z} -x #{x} -y #{y}"
+    generate_xml
+    puts system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} -z #{z} -x #{x} -y #{y}"
   end
 
   private
@@ -74,11 +72,11 @@ class Raster < ActiveRecord::Base
             raster_symbolizer = xml.RasterSymbolizer {
               raster_colorizer = xml.RasterColorizer {
                 stop = xml.stop
-                stop['color'] = COLOR_MIN
+                stop['color'] = color_min
                 stop['value'] = extract_min_max_pixel[0].to_s
 
                 stop = xml.stop
-                stop['color'] = COLOR_MAX
+                stop['color'] = color_max
                 stop['value'] = extract_min_max_pixel[1].to_s
               }
 
@@ -116,8 +114,8 @@ class Raster < ActiveRecord::Base
 
   #TODO: add background jobs
   def create_tiles
-    generate_xml unless File.exists?("#{rasters_path}/style.xml")
-    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path}"
+    generate_xml
+    puts system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} --zmin #{zoom_min} --zmax #{zoom_max}"
   end
 
   # TODO: add background jobs

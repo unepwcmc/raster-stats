@@ -15,8 +15,8 @@ RAD_TO_DEG = 180/pi
 NUM_THREADS = 4
 
 # Default number of zoom levels to render
-MIN_ZOOM_LEVEL = 0
-MAX_ZOOM_LEVEL = 5
+#MIN_ZOOM_LEVEL = 0
+#MAX_ZOOM_LEVEL = 5
 
 # Change the following for different bounding boxes and zoom levels (default: World)
 BBOX = (-180.0,-90.0, 180.0,90.0)
@@ -57,7 +57,7 @@ class GoogleProjection:
          return (f,h)
 
 class RenderThread:
-    def __init__(self, tile_dir, mapfile, q, printLock, maxZoom):
+    def __init__(self, tile_dir, mapfile, q, printLock, zmax):
         self.tile_dir = tile_dir
         self.q = q
         self.m = mapnik.Map(256, 256)
@@ -70,7 +70,7 @@ class RenderThread:
         self.prj = mapnik.Projection(self.m.srs)
 
         # Projects between tile pixel co-ordinates and LatLong (EPSG:4326)
-        self.tileproj = GoogleProjection(maxZoom + 1)
+        self.tileproj = GoogleProjection(zmax + 1)
 
     def render_tile(self, tile_uri, x, y, z):
         # Calculate pixel positions of bottom-left & top-right
@@ -130,14 +130,17 @@ class RenderThread:
             self.printLock.release()
             self.q.task_done()
 
-def render_tiles(mapfile, tile_dir, bbox = BBOX, minZoom = MIN_ZOOM_LEVEL, maxZoom = MAX_ZOOM_LEVEL, name = "World", num_threads = NUM_THREADS, tms_scheme = False):
+def render_tiles(mapfile, tile_dir, zmin, zmax, bbox = BBOX, name = "World", num_threads = NUM_THREADS, tms_scheme = False):
     # Launch rendering threads
     queue = Queue(32)
     printLock = threading.Lock()
     renderers = {}
 
+    zmax = int(zmax)
+    zmin = int(zmin)
+
     for i in range(num_threads):
-        renderer = RenderThread(tile_dir, mapfile, queue, printLock, maxZoom)
+        renderer = RenderThread(tile_dir, mapfile, queue, printLock, zmax)
         render_thread = threading.Thread(target = renderer.loop)
         render_thread.start()
         renderers[i] = render_thread
@@ -145,12 +148,12 @@ def render_tiles(mapfile, tile_dir, bbox = BBOX, minZoom = MIN_ZOOM_LEVEL, maxZo
     if not os.path.isdir(tile_dir):
          os.mkdir(tile_dir)
 
-    gprj = GoogleProjection(maxZoom + 1) 
+    gprj = GoogleProjection(zmax + 1) 
 
     ll0 = (bbox[0], bbox[3])
     ll1 = (bbox[2], bbox[1])
 
-    for z in range(minZoom, maxZoom + 1):
+    for z in range(zmin, zmax + 1):
         px0 = gprj.fromLLtoPixel(ll0, z)
         px1 = gprj.fromLLtoPixel(ll1, z)
 
@@ -251,6 +254,8 @@ if __name__ == "__main__":
     parser.add_option('-z', action = 'store', dest = 'zoom', help = 'defines zoom level')
     parser.add_option('-x', action = 'store', dest = 'x_coord', help = 'defines X coordinate')
     parser.add_option('-y', action = 'store', dest = 'y_coord', help = 'defines Y coordinate')
+    parser.add_option('--zmin', action = 'store', dest = 'zoom_min', help = 'defines maximum zoom')
+    parser.add_option('--zmax', action = 'store', dest = 'zoom_max', help = 'defines minimum zoom')
     (opts, args) = parser.parse_args()
 
     mapfile = opts.raster_path
@@ -261,10 +266,8 @@ if __name__ == "__main__":
         tile_dir = tile_dir + '/'
 
     try:
-      opts.zoom
-      opts.x_coord
-      opts.y_coord
-    except:
-      render_tiles(mapfile, tile_dir)
-    else:
       render_tile(mapfile, tile_dir, opts.zoom, opts.x_coord, opts.y_coord)
+    except:
+      render_tiles(mapfile, tile_dir, opts.zoom_min, opts.zoom_max)
+
+      

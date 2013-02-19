@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121126095420) do
+ActiveRecord::Schema.define(:version => 20130218131816) do
 
   create_table "rasters", :force => true do |t|
     t.string   "display_name"
@@ -19,6 +19,15 @@ ActiveRecord::Schema.define(:version => 20121126095420) do
     t.float    "pixel_size"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.string   "color_min"
+    t.string   "color_max"
+    t.integer  "zoom_min"
+    t.integer  "zoom_max"
+  end
+
+  create_table "tiles", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "users", :force => true do |t|
