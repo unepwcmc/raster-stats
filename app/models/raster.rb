@@ -32,7 +32,12 @@ class Raster < ActiveRecord::Base
   #TODO: add background jobs
   def create_tile(z, x, y)
     generate_xml
-    puts system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} -z #{z} -x #{x} -y #{y}"
+    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} -z #{z} -x #{x} -y #{y}"
+  end
+
+  def create_tiles
+    generate_xml
+    system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} --zmin #{zoom_min} --zmax #{zoom_max}"
   end
 
   private
@@ -112,11 +117,7 @@ class Raster < ActiveRecord::Base
     end
   end
 
-  #TODO: add background jobs
-  def create_tiles
-    generate_xml
-    puts system "#{self.class.python_command} #{Rails.root.join('lib')}/create_tiles.py --xml #{rasters_path}/style.xml --tiles #{raster_tiles_path} --zmin #{zoom_min} --zmax #{zoom_max}"
-  end
+
 
   # TODO: add background jobs
   after_create do

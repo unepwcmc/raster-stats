@@ -114,10 +114,7 @@ class RenderThread:
 
             exists = ''
 
-            if os.path.isfile(tile_uri):
-                exists = "exists"
-            else:
-                self.render_tile(tile_uri, x, y, z)
+            self.render_tile(tile_uri, x, y, z)
 
             bytes = os.stat(tile_uri)[6]
             empty = ''

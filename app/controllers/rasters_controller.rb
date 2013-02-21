@@ -33,10 +33,10 @@ class RastersController < ApplicationController
 
   def update
     @raster = Raster.find(params[:id])
-
     if @raster.update_attributes(params[:raster])
       flash[:notice] = 'Raster was successfully updated.'
     end
+    @raster.create_tiles
     respond_with(@raster)
   end
 
