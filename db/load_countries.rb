@@ -10,8 +10,8 @@ obj = JSON.parse(json)
 obj['features'].each do |item| #{|item| pp item['properties']['iso_a2']}
 
   #pp item['properties']['iso_a2']
-  pp item['properties']['geometry']
-  #pp JSON.load(item['properties']['geometry'])
+  pp item['geometry']
+  pp JSON.load(item['geometry'])
 
   #data = {}
   #data["iso_a2"] = item['properties']['iso_a2']
