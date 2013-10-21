@@ -16,5 +16,6 @@ obj['features'].each do |item| #{|item| pp item['properties']['iso_a2']}
   data["geometry"] = item['properties']['geometry']
   
   d = Countries.new(data)
+  d.save
 
 end
