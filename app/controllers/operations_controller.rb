@@ -7,7 +7,7 @@ class OperationsController < ApplicationController
   def show
     raster = Raster.find(params[:raster_id])
     if params[:iso2]
-      polygon = Countries.select(:geometry).where(:iso_a2 => params[:iso2])
+      polygon = Countries.select(:geometry).where(:iso_a2 => params[:iso2]).first
       starspan = Starspan.new(raster, params[:id], polygon)
     else
       starspan = Starspan.new(raster, params[:id], params[:polygon])
