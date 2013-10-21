@@ -8,8 +8,9 @@ class OperationsController < ApplicationController
     raster = Raster.find(params[:raster_id])
     if params[:iso2]
       polygon = Countries.select(:geometry).where(:iso_a2 => params[:iso2])
-    else
       starspan = Starspan.new(raster, params[:id], polygon)
+    else
+      starspan = Starspan.new(raster, params[:id], params[:polygon])
     end
     render json: starspan.result
   end
