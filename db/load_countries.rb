@@ -11,7 +11,7 @@ obj['features'].each do |item| #{|item| pp item['properties']['iso_a2']}
 
   #pp item['properties']['iso_a2']
   pp item['properties']['geometry']
-  pp JSON.load(item['properties']['geometry'])
+  #pp JSON.load(item['properties']['geometry'])
 
   #data = {}
   #data["iso_a2"] = item['properties']['iso_a2']
