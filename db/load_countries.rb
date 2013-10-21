@@ -7,17 +7,19 @@ require '../config/environment.rb'
 json = File.read('./data/world_50m.geojson')
 obj = JSON.parse(json)
 
+Countries.destroy_all
+
 obj['features'].each do |item| #{|item| pp item['properties']['iso_a2']}
 
   #pp item['properties']['iso_a2']
-  pp item['geometry']
-  pp JSON.load(item['geometry'])
+  #pp item['geometry']
+  #pp JSON.load(item['geometry'])
 
-  #data = {}
-  #data["iso_a2"] = item['properties']['iso_a2']
-  #data["geometry"] = JSON.load(item['properties']['geometry'])
-  #
-  #d = Countries.new(data)
-  #d.save
+  data = {}
+  data["iso_a2"] = item['properties']['iso_a2']
+  data["geometry"] = item['geometry']
+  
+  d = Countries.new(data)
+  d.save
 
 end
