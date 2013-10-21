@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  iso_a2: MyString
+  geometry: MyText
+
+two:
+  iso_a2: MyString
+  geometry: MyText
