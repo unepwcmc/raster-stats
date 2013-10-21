@@ -17,7 +17,7 @@ obj['features'].each do |item| #{|item| pp item['properties']['iso_a2']}
 
   data = {}
   data["iso_a2"] = item['properties']['iso_a2']
-  data["geometry"] = item['geometry']
+  data["geometry"] = JSON.generate(item['geometry'])
   
   d = Countries.new(data)
   d.save
