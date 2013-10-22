@@ -8,8 +8,7 @@ class OperationsController < ApplicationController
     raster = Raster.find(params[:raster_id])
     if params[:iso2]
       polygon = Countries.where(:iso_a2 => params[:iso2]).first.geometry
-      debugger
-      starspan = Starspan.new(raster, params[:id], polygon)
+      starspan = Starspan.new(raster, params[:id], CGI::escape(polygon))
     else
       starspan = Starspan.new(raster, params[:id], params[:polygon])
     end
