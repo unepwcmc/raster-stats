@@ -7,8 +7,10 @@ class OperationsController < ApplicationController
   def show
     raster = Raster.find(params[:raster_id])
     if params[:iso2]
-      polygon = Countries.where(:iso_a2 => params[:iso2]).first.geometry
-      geo_json = "{\"type\": \"FeatureCollection\",\"features\": [{\"type\": \"Feature\", \"id\": 0, \"properties\": { \"id\": null },\"geometry\": #{polygon}}]}"
+      country = Countries.where(:iso_a2 => params[:iso2]).first
+      polygon = country.geometry
+      area = country.area
+      geo_json = "{\"type\": \"FeatureCollection\",\"features\": [{\"type\": \"Feature\", \"id\": 0, \"properties\": { \"id\": null, \"AREA\": #{area} },\"geometry\": #{polygon}}]}"
       starspan = Starspan.new(raster, params[:id], geo_json)
     else
       starspan = Starspan.new(raster, params[:id], params[:polygon])

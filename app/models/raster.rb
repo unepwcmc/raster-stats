@@ -12,7 +12,7 @@ class Raster < ActiveRecord::Base
 
 
   def path(filename = 'default', img_extension = false)
-    "#{rasters_path}/#{filename}.tif#{(img_extension && '.img') || ''}"
+    "#{rasters_path}/#{filename}.tif"
   end
 
   class << self
@@ -64,9 +64,9 @@ class Raster < ActiveRecord::Base
 
   def generate_rasters
     system "#{self.class.gdalwarp_command} -dstnodata 0 #{path} #{path('ndata')}"
-    system "#{self.class.gdal_translate_command} -of HFA #{path('ndata')} #{path('high', true)}"
-    system "#{self.class.gdal_translate_command} -outsize #{RESOLUTIONS[:medium]}% #{RESOLUTIONS[:medium]}% -of HFA #{path('ndata')} #{path('medium', true)}"
-    system "#{self.class.gdal_translate_command} -outsize #{RESOLUTIONS[:low]}% #{RESOLUTIONS[:low]}% -of HFA #{path('ndata')} #{path('low', true)}"
+    system "#{self.class.gdal_translate_command} -of GTiff #{path('ndata')} -co COMPRESS=LZW #{path('high', true)}"
+    system "#{self.class.gdal_translate_command} -outsize #{RESOLUTIONS[:medium]}% #{RESOLUTIONS[:medium]}% -of GTiff #{path('ndata')} -co COMPRESS=LZW #{path('medium', true)}"
+    system "#{self.class.gdal_translate_command} -outsize #{RESOLUTIONS[:low]}% #{RESOLUTIONS[:low]}% -of GTiff #{path('ndata')} -co COMPRESS=LZW #{path('low', true)}"
   end
 
   def generate_xml

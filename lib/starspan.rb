@@ -22,15 +22,18 @@ class Starspan
 
   def resolution_used
     return @resolution if defined? @resolution
-
     pixels_processed = 2_300_000
-    area = self.class.calculate_area_of_polygon(JSON.parse(@polygon))
-
+    parsed_json = JSON.parse(@polygon)
+    begin
+      json_a = parsed_json["features"][0]["properties"]["AREA"]
+    rescue
+      json_a = nil
+    end
+    area = json_a ? json_a : self.class.calculate_area_of_polygon(parsed_json)
     Raster::RESOLUTIONS.each do |resolution, percentage|
       pixel_area = @raster.pixel_size**2 * (percentage / 100)**2
-      return (@resolution = resolution) if((area / pixel_area) < pixels_processed)
+      return (@resolution = resolution) if ((area / pixel_area) < pixels_processed)
     end
-
     return :low
   end
 
