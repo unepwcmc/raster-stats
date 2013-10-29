@@ -1,6 +1,7 @@
 class Starspan
   require 'csv'
   require 'json'
+  require 'timeout'
 
   attr_reader :identifier, :raster, :operation, :polygon
 
@@ -13,8 +14,18 @@ class Starspan
 
   def result
     if respond_to?(@operation)
-      send(@operation)
-      return results_to_hash
+      pid = send(@operation)
+      begin
+        Timeout.timeout(30) do
+          puts 'waiting for the process to end'
+          Process.wait(pid)
+          puts 'process finished in time'
+          return results_to_hash
+        end
+      rescue Timeout::Error
+        puts 'process not finished in time, killing it'
+        Process.kill('KILL', pid)
+      end
     else
       {error: 'The application failed when trying to run the analysis...'}
     end
@@ -43,7 +54,7 @@ class Starspan
       raster = ([:min, :max].include?(operation) ? @raster.path(:high, true) : @raster.path(resolution_used, true))
       cmd = "#{self.class.starspan_command} --vector #{vector_file.path} --raster #{raster} --stats #{operation} --out-type table --out-prefix #{self.class.results_path}/ --summary-suffix #{@identifier}.csv"
       puts cmd
-      system(cmd)
+      Process.spawn(cmd)
     end
   end
 
@@ -55,7 +66,7 @@ class Starspan
     end
 
     def starspan_command
-      `which starspan`.delete("\n")
+      `which starspan2`.delete("\n")
     end
     
     def calculate_area_of_polygon(polygon)
