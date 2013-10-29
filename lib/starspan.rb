@@ -16,7 +16,7 @@ class Starspan
     if respond_to?(@operation)
       pid = send(@operation)
       begin
-        Timeout.timeout(30) do
+        Timeout.timeout(70) do
           puts 'waiting for the process to end'
           Process.wait(pid)
           puts 'process finished in time'
