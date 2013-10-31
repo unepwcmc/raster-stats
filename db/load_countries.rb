@@ -26,17 +26,17 @@ def update_countries (features)
   end
 end
 
-json = File.read('./data/world_50m.geojson')
-obj = JSON.parse(json)
-features = obj['features']
-Countries.destroy_all
-load_features features
-
-json = File.read('./data/world_50m_ru.geojson')
-obj = JSON.parse(json)
-features = obj['features']
-Countries.where(:iso_a2 == "RU").first.destroy
-load_features features
+#json = File.read('./data/world_50m.geojson')
+#obj = JSON.parse(json)
+#features = obj['features']
+#Countries.destroy_all
+#load_features features
+#
+#json = File.read('./data/world_50m_ru.geojson')
+#obj = JSON.parse(json)
+#features = obj['features']
+#Countries.where(:iso_a2 == "RU").first.destroy
+#load_features features
 
 json = File.read('./data/world_50m_moll.geojson')
 obj = JSON.parse(json)
