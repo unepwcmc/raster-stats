@@ -20,6 +20,13 @@ class OperationsController < ApplicationController
     else
       starspan = Starspan.new(raster, params[:id], params[:polygon], false)
     end
-    render json: starspan.result
+    if params[:moll] == 'true'
+      res = starspan.result
+      val = (((447 * 447) / 10000) * res[:value]) / 100
+      res[:value] = val
+      render json: res
+    else
+      render json: starspan.result
+    end
   end
 end
