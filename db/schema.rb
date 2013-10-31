@@ -11,17 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131022151751) do
+ActiveRecord::Schema.define(:version => 20131031101621) do
 
   create_table "countries", :force => true do |t|
     t.string   "iso_a2"
     t.text     "geometry"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
     t.float    "area"
+    t.text     "geometry_moll"
   end
 
   add_index "countries", ["area"], :name => "index_countries_on_area"
+  add_index "countries", ["geometry_moll"], :name => "index_countries_on_geometry_moll"
 
   create_table "rasters", :force => true do |t|
     t.string   "display_name"

@@ -8,7 +8,11 @@ class OperationsController < ApplicationController
     raster = Raster.find(params[:raster_id])
     if params[:iso2]
       country = Countries.where(:iso_a2 => params[:iso2]).first
-      polygon = country.geometry
+      if params[:moll]
+        polygon = country.geometry_moll
+      else
+	polygon = country.geometry
+      end
       area = country.area
       geo_json = "{\"type\": \"FeatureCollection\",\"features\": [{\"type\": \"Feature\", \"id\": 0, \"properties\": { \"id\": null, \"AREA\": #{area} },\"geometry\": #{polygon}}]}"
       starspan = Starspan.new(raster, params[:id], geo_json)

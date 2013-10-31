@@ -20,7 +20,9 @@ end
 def update_countries (features)
   features.each do |item|
     country = Countries.where(iso_a2: item['properties']['iso_a2'])[0]
-    Countries.update(country.id, :geometry_moll => JSON.generate(item['geometry']))
+    if country
+      Countries.update(country.id, :geometry_moll => JSON.generate(item['geometry']))
+    end
   end
 end
 

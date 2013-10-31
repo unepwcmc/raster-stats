@@ -1,3 +1,3 @@
 class Countries < ActiveRecord::Base
-  attr_accessible :geometry, :iso_a2, :area
+  attr_accessible :geometry, :iso_a2, :area, :geometry_moll
 end
