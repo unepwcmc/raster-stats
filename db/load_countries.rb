@@ -17,6 +17,13 @@ def load_features (features)
   end
 end
 
+def update_countries (features)
+  features.each do |item|
+    country = Countries.where(iso_a2: item['properties']['iso_a2'])[0]
+    Countries.update(country.id, :geometry_moll => JSON.generate(item['geometry']))
+  end
+end
+
 json = File.read('./data/world_50m.geojson')
 obj = JSON.parse(json)
 features = obj['features']
@@ -28,6 +35,16 @@ obj = JSON.parse(json)
 features = obj['features']
 Countries.where(:iso_a2 == "RU").first.destroy
 load_features features
+
+json = File.read('./data/world_50m_moll.geojson')
+obj = JSON.parse(json)
+features = obj['features']
+update_countries features
+
+json = File.read('./data/world_50m_ru_moll.geojson')
+obj = JSON.parse(json)
+features = obj['features']
+update_countries features
 
 
 
