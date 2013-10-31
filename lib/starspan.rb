@@ -5,11 +5,12 @@ class Starspan
 
   attr_reader :identifier, :raster, :operation, :polygon
 
-  def initialize(raster, operation, polygon)
+  def initialize(raster, operation, polygon, moll)
     @identifier = Time.now.getutc.to_i
     @raster = raster
     @operation = operation
     @polygon = polygon
+    @moll = moll
   end
 
   def result
@@ -33,17 +34,19 @@ class Starspan
 
   def resolution_used
     return @resolution if defined? @resolution
-    pixels_processed = 300_000
+    pixels_processed = @moll ? 0.3 : 200_000
     parsed_json = JSON.parse(@polygon)
     begin
-      json_a = parsed_json["features"][0]["properties"]["AREA"]
+      p = parsed_json["features"][0]["properties"]
+      json_a = @moll ? p["AREA_MOLL"] : p["AREA"]
     rescue
       json_a = nil
     end
     area = json_a ? json_a : self.class.calculate_area_of_polygon(parsed_json)
+  
     Raster::RESOLUTIONS.each do |resolution, percentage|
       pixel_area = @raster.pixel_size**2 / (percentage / 100.0)**2
- 
+
       return (@resolution = resolution) if ((area / pixel_area) < pixels_processed)
     end
     return :low

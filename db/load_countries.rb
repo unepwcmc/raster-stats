@@ -51,6 +51,11 @@ obj = JSON.parse(json)
 features = obj['features']
 update_countries features
 
+country = Countries.where(iso_a2: "RU")[0]
+Countries.update(country.id, 
+  :area_moll => 15000000
+)
+
 
 
 
