@@ -34,7 +34,7 @@ class Starspan
 
   def resolution_used
     return @resolution if defined? @resolution
-    pixels_processed = @moll ? 0.1 : 200_000
+    pixels_processed = @moll ? 0.05 : 100_000
     parsed_json = JSON.parse(@polygon)
     begin
       p = parsed_json["features"][0]["properties"]
