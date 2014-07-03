@@ -41,6 +41,7 @@ gem 'jquery-rails'
 # Deploy with Capistrano
 gem 'capistrano'
 gem 'capistrano-ext'
+gem 'protected_attributes', github: 'rails/protected_attributes'
 
 group :test do
   gem 'factory_girl_rails', '~> 4.4.1'
@@ -50,3 +51,5 @@ group :test do
   gem 'capybara', '~> 2.3.0'
   gem 'codeclimate-test-reporter', require: nil
 end
+
+gem 'activerecord-postgis-adapter', '~>2.0.1'

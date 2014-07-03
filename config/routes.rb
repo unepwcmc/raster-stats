@@ -7,7 +7,7 @@ RasterStats::Application.routes.draw do
 
   devise_for :users
 
-  match 'tiles/:raster_id/:z/:x/:y.png' => 'tiles#show', as: :tile
+  get 'tiles/:raster_id/:z/:x/:y.png' => 'tiles#show', as: :tile
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
